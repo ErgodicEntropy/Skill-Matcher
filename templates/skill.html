@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" http-equiv="content-type">
+        <title>Skill List</title>
+        <link rel="stylesheet" href="static/css/skill.css">
+        <script src="static/js/skill.js"></script>      
+    </head>
+
+    <body>
+        <div class="Skill">
+            <h1> Skill List</h1>
+            <p>Add your skill set!</p>
+            <table>
+                <tr>
+                    <th>Name</th>
+                    <th>Mastery</th>
+                </tr>
+                {% for skill in skill_list %}
+                <tr>
+                    <td>skill.name</td>
+                    <td>skill.mastery</td>          
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </body>
+</html>

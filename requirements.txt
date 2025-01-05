@@ -1,0 +1,6 @@
+fastAPI
+uvicorn
+langchain==0.0.184
+pydantic==1.10.19
+numpy
+matplotlib

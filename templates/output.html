@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Optimal Task List</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/output.css') }}">     
+</head>
+<body>
+    <div class="content">
+        <h1 style="text-align:center">Optimal Task List</h1>
+        <p style="text-align:center">Here is your task list aligned with your energy level!</p>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Task</th>
+                    <th>Energy Requirement</th>
+                    <th>AI Assistance</th>
+                    <th>Rank Explanation</th>
+                    <th>Doing State</th>
+                    <th>Done State</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in optimal_task_list %}
+                <tr class="task-row" id="task-{{ loop.index }}">
+                    <td class="{% if task.finished %}completed{% endif %}">{{ task.content }}</td>
+                    <td>{{ task.energy_required }}</td>
+
+                    <td>
+                        <a href="#" class="recommendation" onclick="getRecommendation('{{ loop.index }}')">Recommendation</a><br>
+                    </td>    
+
+                    <td>
+                        <a href="#"  class="explain" onclick="getExplanation('{{ loop.index }}')">Explain Rank</a><br>
+                    </td>    
+
+                    <!-- Kanban Board -->
+                    <td>
+                        <a href="#" class="doing-button" onclick="markAsDoing('{{ loop.index }}')">Doing</a><br>
+                    </td>    
+                    <td>
+                        <a href="#" class="finish-button" onclick="markAsFinished('{{ loop.index }}')">Finish</a><br>
+                    </td>    
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Overlay for Modal -->
+    <div id="overlay"></div>
+
+    <div id="feedbackModal">
+        <h3>How was the task?</h3>
+        <form id="feedbackForm">
+            <label><input type="radio" name="feedback" value="extremely easy">Extremely Easy</label><br>
+            <label><input type="radio" name="feedback" value="easy">Easy</label><br>
+            <label><input type="radio" name="feedback" value="moderate">Moderate</label><br>
+            <label><input type="radio" name="feedback" value="hard">Hard</label><br>
+            <label><input type="radio" name="feedback" value="extremely hard">Extremely Hard</label><br>
+            <button type="button" onclick="submitFeedback()">Submit</button>
+            <button type="button" onclick="closeModal()">Cancel</button>
+        </form>
+    </div>
+
+    <div id="loading-overlay">
+        <div id="loading-container">
+            <div id="loading-progress"></div>
+            <p id="loading-message"></p>
+        </div>
+    </div>            
+
+    <div id="chatbot">
+        <div class="chat-container">
+            <div class="chatbox">
+                <div class="message bot-message">
+                    <!-- Loading... -->
+                </div>    
+            </div>
+            <div class="chat-input">
+                    <input type="text" name="userMessage" id="userMessage" placeholder="Type your message..."/>
+                    <button type="button" onclick="postRecommendation()">Send</button>
+            </div>
+            <div>
+                    <button type="button" onclick="closeChat()">Done</button>
+            </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="chatbot_explainer">
+        <div class="chat-container_explainer">
+            <div class="chatbox_explainer">
+                <div class="message bot-message_explainer">
+                    <!-- Loading... -->
+                </div>    
+            </div>
+            <div class="chat-input_explainer">
+                    <input type="text" name="userMessage_explainer" id="userMessage_explainer" placeholder="Type your message..."/>
+                    <button type="button" onclick="postExplanation()">Send</button>
+            </div>
+            <div>
+                    <button type="button" onclick="closeExplanationChat()">Done</button>
+            </div>
+            </form>
+        </div>
+    </div>
+    <div class="estimate-energy-button">
+        <form action="/finalize_tasks" method="POST">
+            <input type="submit" value="Reassess My Energy">
+        </form>
+    </div>
+
+    <!-- Kanban Board: implement a timer for the doing board unless the user feedbacks the time required for that task himself -->
+    <!-- User Feedback on Finished Tasks -->
+
+    <script src="{{ url_for('static', filename='js/output.js') }}"></script>
+
+    <style>
+        .doing {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffc107;
+            transition: background-color 0.3s ease, border-left 0.3s ease;
+            font-weight: bold;
+        }
+
+        .finished {
+            background-color: #d4edda;
+            border-left: 5px solid #28a745;
+            transition: background-color 0.3s ease, border-left 0.3s ease;
+            text-decoration: line-through;
+            color: red;
+            font-weight: bold;
+        }
+
+    </style>
+</body>
+</html>
