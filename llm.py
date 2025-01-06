@@ -102,12 +102,12 @@ def get_docsearch(file: AskFileResponse):
     cl.user_session.set("docs", docs)
 
     # Create a unique namespace for the file
-    namespace = str(hash(file.content))
     docsearch = Chroma.from_documents(
         docs, embeddings
         )
     return docsearch
 
+    # namespace = str(hash(file.content))
     # if namespace in namespaces:
     #     docsearch = Pinecone.from_existing_index(
     #         index_name=index_name, embedding=embeddings, namespace=namespace

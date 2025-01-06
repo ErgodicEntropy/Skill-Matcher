@@ -1,14 +1,27 @@
 #local document RAG system
 
+from langchain.chains import LLMChain, ConversationChain
+from langchain.llms import Cohere 
 import chainlit as cl
 from llm import qa_bot
 import prompts
 
-
+llm = Cohere()
 
 AS = prompts.AllocationStrategies
 RE = prompts.TaskRankExplanation
 CP = prompts.CP
+
+def Recommend(task):
+    agent = LLMChain(llm=llm, prompt = AS)
+    resp = agent.run({"task": task})
+    return resp 
+
+def Explain(task, rank, energy_required, user_energy):
+    inputs = {"task": task, "rank": rank, "energy_required": energy_required, "user_energy": user_energy}
+    agent = LLMChain(llm=llm, prompt=RE)
+    resp = agent.run(inputs)
+    return resp
 
 #output function without chainlit
 def respond(query, prompt):
