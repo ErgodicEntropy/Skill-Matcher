@@ -2,41 +2,53 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" http-equiv="content">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Task List</title>
-    <link rel="stylesheet" href="{{ request.url_for('static', path='css/task.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/task.css') }}">
 </head>
 <body>
     <h1>Task List</h1>
     <p>Add your tasks by order of priority</p>
     <div class="content">
-        <tr>
-            <th>Name</th>
-            <th>Date</th>
-            <th>Action</th>
-        </tr>
-        {% for task in Tasks %}
-        <tr>
-            <td>{{ task.name }}</td>
-            <td>{{ task.date }}</td>
-            <td>
-                <a href="{{ request.url_for('UpdateTask', task_id = task.id) }}">Update</a>
-                <a href="{{ request.url_for('DeleteTask', task_id = task.id) }}">Delete</a>
-            </td>
-        </tr>
-        {% endfor %}
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Date</th>
+                <th>Action</th>
+            </tr>
+            {% for task in Tasks %}
+            <tr>
+                <td>{{ task.name }}</td>
+                <td>{{ task.date }}</td>
+                <td>
+                    <a href="#" onclick="LinkClick('{{ task.id }}')">Update</a>
+                    <a href="{{ url_for('delete_task', task_id=task.id) }}">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}    
+        </table>
     </div>
+
+    <div id="update-overlay">
+        <div id="update-content">
+            <h1>Update Task</h1>
+            <form id="update-form-clicker" method="POST">
+                <input type="text" name="content" id="content" required>
+                <input type="submit" id="update-input" value="Update Task"> 
+            </form>
+        </div>    
+    </div>
+
 
     <form action="/" method="POST">
         <input type="text" id="content" name="content" placeholder="Add Task">
         <input type="submit" value="Submit">
     </form>
 
-    <form action="/finalize_tasks" method="POST">
+    <form action="/AddSkill" method="GET">
         <input type="submit" value="Done">
     </form>
-
+    
+    <script src="{{ url_for('static', path='js/task.js') }}"></script>
 </body>
-
-
 </html>

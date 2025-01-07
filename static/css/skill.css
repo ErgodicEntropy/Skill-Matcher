@@ -1,5 +1,5 @@
- /* General Reset */
- * {
+/* General Reset */
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -77,56 +77,222 @@ form {
     margin-top: 20px;
 }
 
-form input[type="text"], form input[type="number"], form input[type="range"] {
-    padding: 10px;
-    width: 60%;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 16px;
+/* General styling for the form */
+.add-skill-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    font-family: Arial, sans-serif;
 }
 
-form input[type="submit"], form button {
-    padding: 10px 20px;
-    margin-left: 10px;
-    background-color: #28a745;
-    border: none;
+/* Style for the input text field */
+.input-text {
+    width: 200px; /* Narrow input text */
+    height: 30px; /* Height of the input text */
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    margin-bottom: 1rem; /* Space between input text and range */
+}
+
+/* Positioning the range slider below the text input */
+.range-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 220px;
+    justify-content: space-between;
+}
+
+.range-slider {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+input[type="range"] {
+    flex: 1;
+}
+
+.range-value {
+    font-size: 0.9rem;
+    margin-left: 0.5rem;
+}
+
+.range-label {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+/* Style for the submit button */
+.submit-button {
+    width: 200px; /* Same width as the input text */
+    height: 30px; /* Same height as the input text */
+    padding: 0.5rem;
+    font-size: 1rem;
     color: white;
-    font-size: 16px;
+    background-color: #007bff;
+    border: none;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    text-align: center;
 }
 
-form input[type="submit"]:hover, form button:hover {
-    background-color: #218838;
+.submit-button:hover {
+    background-color: #0056b3;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .content {
-        width: 90%;
+/* Ensuring responsive layout */
+@media (max-width: 600px) {
+    .input-text,
+    .submit-button {
+        width: 100%;
     }
 
-    table th, table td {
-        font-size: 14px;
-        padding: 8px;
-    }
-
-    form input[type="text"], form input[type="number"], form input[type="range"] {
-        width: 70%;
+    .range-container {
+        flex-direction: column;
+        align-items: center;
     }
 }
 
-@media (max-width: 480px) {
-    h1 {
-        font-size: 28px;
+/* Overlay */
+#update-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Dim the background */
+    z-index: 1000;
+    backdrop-filter: blur(10px) contrast(20%); /* Combine filters */
+}
+
+#update-skill-div {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60%;
+    height:65%;
+    max-width: 400px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background-color: #fff;
+    padding: 5px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    z-index: 1001;
+    display: none;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+
+/* General styling for the form */
+#update-skill-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    font-family: Arial, sans-serif;
+}
+
+/* Style for the input text field */
+#update-skill-name {
+    width: 200px; /* Narrow input text */
+    height: 30px; /* Height of the input text */
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    margin-bottom: 1rem; /* Space between input text and range */
+}
+
+/* Positioning the range slider below the text input */
+.range-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 220px;
+    justify-content: space-between;
+}
+
+.range-slider {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+#update-skill-mastery {
+    flex: 1;
+}
+
+.range-value {
+    font-size: 0.9rem;
+    margin-left: 0.5rem;
+}
+
+.range-label {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+/* Style for the submit button */
+#update-input {
+    width: 80px; /* Same width as the input text */
+    height: 30px; /* Same height as the input text */
+    padding: 0.5rem;
+    font-size: 1rem;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+}
+
+#update-input:hover {
+    background-color: #0056b3;
+}
+
+/* Ensuring responsive layout */
+@media (max-width: 600px) {
+    #update-skill-name,
+    #update-input {
+        width: 100%;
     }
 
-    form input[type="text"], form input[type="number"], form input[type="range"] {
-        width: 60%;
+    .range-container {
+        flex-direction: column;
+        align-items: center;
     }
+}
 
-    form input[type="submit"], form button {
-        width: 30%;
+
+#done-input {
+    width: 80px; /* Same width as the input text */
+    height: 30px; /* Same height as the input text */
+    padding: 0.5rem;
+    font-size: 1rem;
+    color: white;
+    background-color: green;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+}
+
+#done-input:hover {
+    background-color: #0056b3;
+}
+
+@media (max-width: 600px){
+    #done-input {
+        width:100%;
     }
 }

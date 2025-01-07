@@ -1,6 +1,11 @@
 fastAPI
 uvicorn
+jinja2
+python-multipart
+itsdangerous
 langchain==0.0.184
 pydantic==1.10.19
 numpy
 matplotlib
+sqlalchemy
+databases

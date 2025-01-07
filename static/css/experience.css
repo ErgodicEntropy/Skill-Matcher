@@ -1,24 +1,12 @@
 body {
-    background-color: #1e1e2e; /* Dark theme background */
-    color: #f1f1f1; /* Light text for readability */
     font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
+    margin: 20px;
 }
 
-.content {
-    max-width: 600px;
-    margin: 50px auto;
-    padding: 20px;
-    border-radius: 10px;
-    background-color: #2b2b3d; /* Form container background */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-    text-align: center;
-}
 
 h1 {
     font-size: 2rem;
-    color: #ffffff;
+    color: #333;
     margin-bottom: 10px;
     text-align: center;
 }
@@ -30,64 +18,26 @@ p {
     text-align: center;
 }
 
+
 form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+    margin-top: 20px;
 }
 
-label {
-    font-size: 1rem;
-    color: #f1f1f1;
-    text-align: left;
-    margin-bottom: 5px;
+input[type="file"] {
+    margin-bottom: 10px;
 }
 
-select {
-    width: 100%;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #444;
-    background-color: #1c1c28;
-    color: #f1f1f1;
-    font-size: 1rem;
-    cursor: pointer;
-}
-
-select option {
-    background-color: #1c1c28;
-    color: #f1f1f1;
-}
-
-select:focus {
-    outline: none;
-    border-color: #4caf50;
-}
-
-input[type="range"] {
-    width: 100%;
-}
-.submitter {
-    align-items: center;
-}
-.submitter input[type="submit"] {
-    align-items: center;
-}
-input[type="submit"] {
-    width: 50%;
-    padding: 12px 20px;
+button {
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
     border: none;
     border-radius: 5px;
-    background-color: #4caf50;
-    color: #f1f1f1;
-    font-size: 1rem;
     cursor: pointer;
-    align-items: center;
-    transition: background-color 0.3s ease;
 }
 
-input[type="submit"]:hover {
-    background-color: #3a9d40;
+button:hover {
+    background-color: #218838;
 }
 
 #loading-overlay {
@@ -100,16 +50,24 @@ input[type="submit"]:hover {
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1002; /* Ensure it's above other elements */
+    z-index: 1001; /* Ensure it's above other elements */
+    backdrop-filter: blur(10px) contrast(20%); /* Combine filters */
     display: none; /* Hidden by default */
 }
 
 #loading-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60%;
+    height:65%;
     text-align: center;
     background-color: rgba(43, 43, 61, 0.95); /* Semi-transparent dark background */
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    z-index: 1002;
 }
 
 #loading-progress {

@@ -1,12 +1,13 @@
-from fastapi import FastAPI, HTTPException, Request, Path, Query, Form
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi import FastAPI, HTTPException, Request, Form, UploadFile, File
+from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-import asyncio
 from pydantic import BaseModel, Field
 from typing import Optional, Union, List
-from datetime import datetime, date
-import time
+from datetime import datetime
+import os
+import agents
+
 
 app = FastAPI()
 
@@ -17,120 +18,181 @@ app.mount('/static', StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 
+#Limitations with using a global list variable instead of sessions (Skills, Tasks):
+
+# The global list is stored in memory. If the server restarts or crashes, all data will be lost (Data Persistence)
+# This approach doesn’t scale well for larger applications or distributed systems (e.g., multiple server instances) (Scalability).
+# If multiple requests try to modify the global list simultaneously, you might run into race conditions or data corruption (Concurrency Issues).
+# Using global variables can make your code harder to test, debug, and maintain (Global State Problem) .
+
+# --> To avoid this, use a database: sqlite3, postgresql, MySQL...etc (+ sessions)
 
 Skills = []
-
-Tasks = []
+skill_id_counter = 1
 
 class Skill(BaseModel):
     id: int
     name: str = None #default value
-    mastery: float #percentage value
-    date: date
-
-class Experience(BaseModel):
-    id : int
-    name: str = None
+    mastery: int #percentage value
+    date: datetime = Field(default_factory=datetime.now)
+    # description: Optional[str] = None
+    # category: Optional[str] = None
+    # tags: List[str] = []
+    # is_certified: bool = False
+    # experience_years: float = 0.0
+    # last_used: Optional[datetime] = None
+    # priority: str = "Medium"
+    # resources: List[str] = []
     
+# skill = Skill(
+#     id=1,
+#     name="Python Programming",
+#     mastery=85,
+#     description="Proficient in Python for data analysis and web development.",
+#     category="Programming",
+#     tags=["Python", "Data Analysis", "Web Development"],
+#     is_certified=True,
+#     experience_years=3.5,
+#     last_used=datetime(2023, 9, 15),
+#     priority="High",
+#     resources=["Fluent Python", "Real Python Tutorials"]
+# )
+
+Tasks = []
+task_id_counter = 1
 class Task(BaseModel):
     id: int
-    name: str
-    date: datetime = datetime.now()
+    name: str = Field(min_length=1)
+    date: datetime = Field(default_factory=datetime.now)
+    # priority: str = "Medium"
+    # status: str = "Not Started"
+    # due_date: Optional[datetime] = None
+    # assigned_to: Optional[str] = None
+    # tags: List[str] = []
+    # estimated_time: float = 0.0
+    # completed: bool = False
+    # dependencies: List[int] = []
+    # notes: Optional[str] = None
+    # category: Optional[str] = None
+
+# task = Task(
+#     id=1,
+#     name="Complete project report",
+#     priority="High",
+#     status="In Progress",
+#     due_date=datetime(2023, 10, 15),
+#     assigned_to="John Doe",
+#     tags=["Work", "Urgent"],
+#     estimated_time=8.5,
+#     completed=False,
+#     dependencies=[2, 3],
+#     notes="Ensure all sections are reviewed before submission.",
+#     category="Work"
+# )
 
 # Routes for Task Object 
 
 # Dynamic HTML Rendering (Server-Side Rendering):
 
-## POST METHOD        
-
-@app.route('/', methods=['POST', 'GET'])
-def addtask(request: Request, content: str = Form(None)):
-    if request.method == "POST":
-        idd = len(Tasks) + 1
-        task = Task(id=idd, name=content, date=datetime.now().hour)
-        Tasks.append(task)
-        return RedirectResponse("/", status_code=303)
+@app.get("/", response_class=HTMLResponse)
+async def read_tasks(request: Request):
     return templates.TemplateResponse("task.html", {"request": request, "Tasks": Tasks})
 
-## PUT METHOD        
-@app.route("/UpdateTask/{task_id}", methods=["GET", "POST"])
-async def update_task(request: Request, task_id: int, content: str = Form(None)):
-    try:
-        task =  next(task for task in Tasks if task.id == task_id)
-    except StopIteration:
-        raise HTTPException(status_code=404, details="Task not found!")
+@app.post("/")
+async def add_task(content: str = Form(...)):
+    global task_id_counter, Tasks
+    task = Task(id=task_id_counter, name=content, date=datetime.now())
+    Tasks.append(task)
+    task_id_counter += 1
+    return RedirectResponse(url="/", status_code=303)
 
-    if request.method == "POST":
-        # Handle form submission
-        task.name = content
-        return RedirectResponse(url="/", status_code=303)
+@app.post("/update/{task_id}")
+async def update_task(task_id: int, content: str = Form(...)):
+    task = next((t for t in Tasks if t.id == task_id), None)
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+    task.name = content
+    return RedirectResponse(url="/", status_code=303)
 
-    # Render the update form (GET request)
-    return templates.TemplateResponse("updatetask.html", {"request": request, "task": task})
-
-## DELETE METHOD       
-@app.route("/DeleteTask/{task_id}", methods=["POST", "GET"])
-def delete_task(task_id: int, request: Request):
-    if request.method == "POST":
-        try:
-            Tasks.pop(task_id-1)
-            return RedirectResponse(url="/", status_code=303)            
-        except StopIteration:
-            raise HTTPException(status_code=404, detail="Task not found!")
-
-@app.route("/finalize_tasks", methods=["POST"])
-def finalize():
-    return RedirectResponse(url="/skills_home", status_code=303)
+@app.get("/delete/{task_id}")
+async def delete_task(task_id: int):
+    global Tasks
+    Tasks = [t for t in Tasks if t.id != task_id]
+    return RedirectResponse(url="/", status_code=303)
 
 # Routes for handling Skill Object:
 
-# Static HTML Rendering (Client-Side Rendering):
+# Dynamic HTML Rendering (Server-Side Rendering):
 
-@app.get('/skills_home')
-def read():
-    with open("templates/skill.html", "r") as file:
-        return HTMLResponse(content=file.read())
+@app.get("/AddSkill", response_class=HTMLResponse)
+async def render_html(request: Request):
+    return templates.TemplateResponse("skill.html", {"request": request, "Skills": Skills})
 
-## POST METHOD        
-@app.post('/skills', response_model=Skill)
-def add_task(skill: Skill):
+@app.post("/AddSkill")
+async def add_skill(content: str = Form(None), mastery: str = Form(None)):
+    global skill_id_counter, Skills
+    skill = Skill(id=skill_id_counter, name=content, mastery = int(mastery), date=datetime.now())
     Skills.append(skill)
-    return skill
+    skill_id_counter += 1 
+    return RedirectResponse(url="/AddSkill", status_code=303)
 
-## GET METHOD        
-@app.get('/SkillList', response_model=list[Skill])
-def get_tasklist():
-    return Skills 
-
-@app.get('/skills/{id}', response_model=Skill)
-def get_task(id: int):
-    try:
-        skill = Skills[id-1]
-        return skill
-    except:
-        raise HTTPException(status_code=404, detail="Skill not found!")
-
-
-## PUT METHOD        
-@app.put('/skills/{id}', response_model=Skill)
-def update_task(id: int, updated_skill: Skill):
-    for skill in Skills:
-        if skill.id == id:
-            skill.name = updated_skill.name
-            skill.mastery = updated_skill.mastery
-            return skill
-    raise HTTPException(status_code=404, detail="Skill not found!")
-        
-
-## DELETE METHOD        
-@app.delete("/skills/{id}")
-def update_tasks(id: int):
-    for skill in Skills:
-        if skill.id == id:
-            Skills.pop(id-1)
-            return {"message": f"Skill {id} Deleted"}
-
-    raise HTTPException(status_code=404, detail="Skill not found!")
+@app.post("/UpdateSkill/{skill_id}")
+async def update_skill(skill_id: int, content: str = Form(None), mastery: str = Form(None)):
+    skill = next((t for t in Skills if t.id == skill_id), None)
+    if not skill:
+        raise HTTPException(status_code=404, detail="Skill not Found!")
+    skill.name = content
+    skill.mastery = int(mastery)
+    return RedirectResponse(url="/AddSkill", status_code=303)
+    
+@app.get("/DeleteSkill/{skill_id}")
+async def delete_skill(skill_id: int):
+    global Skills
+    Skills = [s for s in Skills if s.id != skill_id]
+    return RedirectResponse(url="/AddSkill", status_code=303)
 
 
 # Routes for handling Experience Object:
+
+# Directory to save uploaded files
+UPLOAD_DIR = "uploads"
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+DATA_PATH = 'uploads/'
+
+## Route to serve the HTML form
+@app.get("/Experience", response_class=HTMLResponse)
+async def upload_form():
+    with open("templates/experience.html", "r") as file:
+        return HTMLResponse(content=file.read())
+    
+## Route to handle file upload
+@app.post("/UploadFile")
+async def upload_cv(cv: UploadFile = File(...)):
+    try:
+        # Save the uploaded file
+        file_path = os.path.join(UPLOAD_DIR, cv.filename)
+        with open(file_path, "wb") as buffer:
+            buffer.write(await cv.read())
+        return RedirectResponse(url="/Experience", status_code=303)
+        # return JSONResponse(content={"message": "File uploaded successfully!"}, status_code=200)
+        # return {"message": f"File '{cv.filename}' uploaded successfully!"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+## RAG the CV:
+@app.post("/ReadFile")
+async def read_file(file):
+    agents.create_vector_db(DATA_PATH)
+    resp = agents.CV_QA(file)
+    
+
+
+
+
+
+
+
+
+
+# Routes for handling Output
+

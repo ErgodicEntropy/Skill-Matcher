@@ -79,7 +79,7 @@ form {
 
 form input[type="text"] {
     padding: 10px;
-    width: 60%;
+    width: 30%;
     border: 1px solid #ddd;
     border-radius: 5px;
     font-size: 16px;
@@ -113,7 +113,7 @@ form input[type="submit"]:hover {
     }
 
     form input[type="text"] {
-        width: 70%;
+        width: 30%;
     }
 }
 
@@ -123,10 +123,45 @@ form input[type="submit"]:hover {
     }
 
     form input[type="text"] {
-        width: 60%;
+        width: 30%;
     }
 
     form input[type="submit"] {
         width: 30%;
     }
 }
+
+
+#update-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Dim the background */
+    z-index: 1000;
+    backdrop-filter: blur(10px) contrast(20%); /* Combine filters */
+}
+
+#update-content {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60%;
+    height:65%;
+    max-width: 400px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background-color: #fff;
+    padding: 5px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    z-index: 1001;
+    display: none;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+
