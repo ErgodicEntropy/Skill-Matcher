@@ -32,8 +32,8 @@ document.getElementById('UploadForm').addEventListener('submit', function (event
             updateLoadingMessage('Almost there! Thanks for your patience');
 
             // // Submit the hidden form to /output (POST request)
-            // document.getElementById('redirectForm').submit();
-            // window.location.href = "API URL"
+            document.getElementById('RetreiveForm').submit();
+            window.location.href = "http://127.0.0.1:8000/RetrieveSkills"
         } else {
             console.error('Error submitting to /data:', response.status);
             updateLoadingMessage('Something went wrong. Please try again.');

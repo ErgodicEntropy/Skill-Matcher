@@ -5,10 +5,35 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from typing import Optional, Union, List
 from datetime import datetime
+import json
 import os
 import agents
 
+def extract_json(data_str:str) -> Union[list, dict]: # LLM Response
+    try:
+        n = data_str.index('[')
+        m = data_str.index(']')
+        return json.loads(data_str[n:m+1].strip())
+    except (ValueError, json.JSONDecodeError) as e:
+        print(f"Error extracting JSON: {e}")
+        return {}
 
+def extract_JSON(data_str:str) -> Union[list, dict]: # LLM Response
+    if data_str.startswith("```json"):
+        data_str = data_str[7:]
+    if data_str.endswith("```"):
+        data_str = data_str[:-3]
+    if data_str.startswith("```"):
+        data_str = data_str[3:]
+
+    data_str = data_str.strip()
+    try:
+        return json.loads(data_str)
+    except (ValueError, json.JSONDecodeError) as e:
+        print(f"Error extracting JSON: {e}")
+        return {}
+    
+    
 app = FastAPI()
 
 # Mount static files (e.g., CSS, JS)
@@ -29,6 +54,7 @@ templates = Jinja2Templates(directory="templates")
 
 Skills = []
 skill_id_counter = 1
+
 
 class Skill(BaseModel):
     id: int
@@ -155,9 +181,8 @@ async def delete_skill(skill_id: int):
 # Routes for handling Experience Object:
 
 # Directory to save uploaded files
-UPLOAD_DIR = "uploads"
+UPLOAD_DIR = 'uploads'
 os.makedirs(UPLOAD_DIR, exist_ok=True)
-DATA_PATH = 'uploads/'
 
 ## Route to serve the HTML form
 @app.get("/Experience", response_class=HTMLResponse)
@@ -170,7 +195,8 @@ async def upload_form():
 async def upload_cv(cv: UploadFile = File(...)):
     try:
         # Save the uploaded file
-        file_path = os.path.join(UPLOAD_DIR, cv.filename)
+        # file_path = os.path.join(UPLOAD_DIR, cv.filename)
+        file_path = f"{UPLOAD_DIR}/{cv.filename}"
         with open(file_path, "wb") as buffer:
             buffer.write(await cv.read())
         return RedirectResponse(url="/Experience", status_code=303)
@@ -179,27 +205,45 @@ async def upload_cv(cv: UploadFile = File(...)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
+DATA_PATH = 'uploads/'
+agents.create_vector_db(DATA_PATH)
+
+categorymapper = {
+        "extremely low":10,
+        "low":30,
+        "moderate":50, 
+        "high":70, 
+        "extremely high":90
+    }
+
 ## RAG the CV:
-@app.post("/ReadFile")
-async def read_file(file):
-    agents.create_vector_db(DATA_PATH)
-    resp = agents.CV_QA(file)
+@app.post("/RetrieveSkills")
+async def retrieve_skills():
+    global skill_id_counter, Skills    
+    RetrievedSkills = agents.Retrieve_SKills()
+    RS = extract_json(RetrievedSkills)
+    for skill in RS: 
+        sk = Skill(id = skill_id_counter, name=skill["name"], mastery=categorymapper[skill["mastery"]])
+        Skills.append(sk)
+        skill_id_counter +=1
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+noveltymapper = {
+        "unfamiliar":10,
+        "beginner":30,
+        "moderate":50, 
+        "familiar":70, 
+        "expert":90
+    }
+tasks_novelty = []
+        
+@app.post("/TaskNovelty")
+async def task_novelty():
+    global tasks_novelty
+    for task in Tasks:
+        novelty = noveltymapper[extract_json(agents.TaskNovelty(task.name))["task_novelty"]]
+        tasks_novelty.append({task.id: novelty})
+    
 
 
 # Routes for handling Output
