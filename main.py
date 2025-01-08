@@ -184,7 +184,15 @@ async def upload_cv(cv: UploadFile = File(...)):
 async def read_file(file):
     agents.create_vector_db(DATA_PATH)
     resp = agents.CV_QA(file)
-    
+
+
+
+
+
+
+
+
+
 
 
 
@@ -195,4 +203,9 @@ async def read_file(file):
 
 
 # Routes for handling Output
+@app.post("/Compute")
+async def Compute(): 
+    pass
+
+
 

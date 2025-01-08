@@ -2,6 +2,8 @@ from fastapi import FastAPI, Request, Response, Depends, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 import uuid
+import secrets
+
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")

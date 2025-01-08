@@ -35,7 +35,9 @@ def Continue_Conversation(message):
     resp = Conv_Agent.run({"message": message, "history": memory.memory_key})
     return resp
 
-
+## RETRIEVE SKILLS AND THEIR WEIGHTS/IMPORTANCE FOR THAT TASK
+def TaskReq(task):
+    pass
 
 def Recommend(task):
     agent = LLMChain(llm=llm, prompt = AS)
@@ -66,6 +68,7 @@ def create_vector_db(DATA_PATH):
     db.save_local(DB_FAISS_PATH)
 
 ##Local Document RAG system
+##### RETRIEVE SKILLS FROM CV -> LEAVE QA AND CONVERSATION TO THE CHAINLIT CODE
 
 #QA the CV
 def CV_QA(file):
@@ -89,8 +92,7 @@ def CV_Conv(message):
     embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2",
                                        model_kwargs={'device': 'cpu'})
     db = FAISS.load_local(DB_FAISS_PATH, embeddings)
-    #load llm
-    llm = llm
+
     convret = ConversationalRetrievalChain.from_llm(llm=llm,
                                                   chain_type = "stuff", 
                                                   retriever=db.as_retriever(search_kwargs={'k': 2}),
@@ -105,6 +107,57 @@ def CV_Conv(message):
 
 
 #chainlit code
+
+@cl.on_chat_start
+async def start(prompt):
+    welcome_message = """Welcome to the BloomAI PDF QA demo! To get started:
+    1. Upload a PDF or text file
+    2. Ask a question about the file
+    """
+    await cl.Avatar(
+        name="BloomAI",
+        path = "./public/logo_dark.png" ,
+    ).send()
+    files = None
+    while files is None:
+        files = await cl.AskFileMessage(
+            content=welcome_message,
+            accept=["text/plain", "application/pdf"],
+            max_size_mb=20,
+            timeout=180,
+            disable_human_feedback=True,
+        ).send()
+
+    file = files[0]
+
+    msg = cl.Message(
+        content=f"Processing `{file.name}`...", disable_human_feedback=True, author= "BloomAI"
+    )
+    await msg.send()
+ 
+    # No async implementation in the Pinecone client, fallback to sync
+    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2",
+                                       model_kwargs={'device': 'cpu'})
+    db = FAISS.load_local(DB_FAISS_PATH, embeddings)
+
+    message_history = ChatMessageHistory()
+
+    memory = ConversationBufferMemory(
+        memory_key="chat_history",
+        input_key = "message",
+        output_key="answer",
+        chat_memory=message_history,
+        return_messages=True,
+    )
+    
+    chain = ConversationalRetrievalChain.from_llm(llm=llm,chain_type = "stuff", retriever=db.as_retriever(search_kwargs={'k': 2}),memory=memory,combine_docs_chain_kwargs={'prompt': prompt},return_source_documents=True,verbose=True)
+
+    # Let the user know that the system is ready
+    msg.content = f"`{file.name}` processed. You can now ask questions! As your tutor, I will try to help answering your questions as much as I can"
+    await msg.update()
+
+    cl.user_session.set("chain", chain)
+
 @cl.on_chat_start
 async def start(prompt):
     embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2",
@@ -119,7 +172,7 @@ async def start(prompt):
                                        )
     msg = cl.Message(content="Starting the bot...")
     await msg.send()
-    msg.content = "Hi, Welcome to Medical Bot. What is your query?"
+    msg.content = "Hi, Welcome!"
     await msg.update()
 
     cl.user_session.set("chain", chain)
