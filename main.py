@@ -120,9 +120,13 @@ class Task(BaseModel):
 
 # Dynamic HTML Rendering (Server-Side Rendering):
 
+# @app.get("/", response_class=HTMLResponse)
+# async def read_tasks(request: Request):
+#     return templates.TemplateResponse("task.html", {"request": request, "Tasks": Tasks})
+
 @app.get("/", response_class=HTMLResponse)
 async def read_tasks(request: Request):
-    return templates.TemplateResponse("task.html", {"request": request, "Tasks": Tasks})
+    return templates.TemplateResponse("test.html", {"request": request, "Tasks": Tasks, "Skills":Skills})
 
 @app.post("/")
 async def add_task(content: str = Form(...)):
@@ -146,13 +150,13 @@ async def delete_task(task_id: int):
     Tasks = [t for t in Tasks if t.id != task_id]
     return RedirectResponse(url="/", status_code=303)
 
-# Routes for handling Skill Object:
+# Routes for handling Skill Object and Experience Object:
 
 # Dynamic HTML Rendering (Server-Side Rendering):
 
-@app.get("/AddSkill", response_class=HTMLResponse)
-async def render_html(request: Request):
-    return templates.TemplateResponse("skill.html", {"request": request, "Skills": Skills})
+# @app.get("/Data", response_class=HTMLResponse)
+# async def render_html(request: Request):
+#     return templates.TemplateResponse("data.html", {"request": request, "Skills": Skills})
 
 @app.post("/AddSkill")
 async def add_skill(content: str = Form(None), mastery: str = Form(None)):
@@ -160,7 +164,7 @@ async def add_skill(content: str = Form(None), mastery: str = Form(None)):
     skill = Skill(id=skill_id_counter, name=content, mastery = int(mastery), date=datetime.now())
     Skills.append(skill)
     skill_id_counter += 1 
-    return RedirectResponse(url="/AddSkill", status_code=303)
+    return RedirectResponse(url="/", status_code=303)
 
 @app.post("/UpdateSkill/{skill_id}")
 async def update_skill(skill_id: int, content: str = Form(None), mastery: str = Form(None)):
@@ -169,26 +173,17 @@ async def update_skill(skill_id: int, content: str = Form(None), mastery: str = 
         raise HTTPException(status_code=404, detail="Skill not Found!")
     skill.name = content
     skill.mastery = int(mastery)
-    return RedirectResponse(url="/AddSkill", status_code=303)
+    return RedirectResponse(url="/", status_code=303)
     
 @app.get("/DeleteSkill/{skill_id}")
 async def delete_skill(skill_id: int):
     global Skills
     Skills = [s for s in Skills if s.id != skill_id]
-    return RedirectResponse(url="/AddSkill", status_code=303)
-
-
-# Routes for handling Experience Object:
+    return RedirectResponse(url="/", status_code=303)
 
 # Directory to save uploaded files
 UPLOAD_DIR = 'uploads'
 os.makedirs(UPLOAD_DIR, exist_ok=True)
-
-## Route to serve the HTML form
-@app.get("/Experience", response_class=HTMLResponse)
-async def upload_form():
-    with open("templates/experience.html", "r") as file:
-        return HTMLResponse(content=file.read())
     
 ## Route to handle file upload
 @app.post("/UploadFile")
@@ -199,7 +194,7 @@ async def upload_cv(cv: UploadFile = File(...)):
         file_path = f"{UPLOAD_DIR}/{cv.filename}"
         with open(file_path, "wb") as buffer:
             buffer.write(await cv.read())
-        return RedirectResponse(url="/Experience", status_code=303)
+        return RedirectResponse(url="/", status_code=303)
         # return JSONResponse(content={"message": "File uploaded successfully!"}, status_code=200)
         # return {"message": f"File '{cv.filename}' uploaded successfully!"}
     except Exception as e:
@@ -207,7 +202,7 @@ async def upload_cv(cv: UploadFile = File(...)):
 
 
 DATA_PATH = 'uploads/'
-agents.create_vector_db(DATA_PATH)
+# agents.create_vector_db(DATA_PATH)
 
 categorymapper = {
         "extremely low":10,
@@ -216,34 +211,72 @@ categorymapper = {
         "high":70, 
         "extremely high":90
     }
+NewSkills = []
+neoskill_id_counter = skill_id_counter
 
-## RAG the CV:
-@app.post("/RetrieveSkills")
+
+@app.get("/RetrieveSkills", response_class=HTMLResponse)
+async def display_neoskills(request: Request):
+    return templates.TemplateResponse("neoskill.html", {"request": request, "NeoSkills": NewSkills})
+
+@app.post("/AddNeoSkills")
 async def retrieve_skills():
-    global skill_id_counter, Skills    
+    global neoskill_id_counter,NewSkills    
     RetrievedSkills = agents.Retrieve_SKills()
     RS = extract_json(RetrievedSkills)
     for skill in RS: 
-        sk = Skill(id = skill_id_counter, name=skill["name"], mastery=categorymapper[skill["mastery"]])
-        Skills.append(sk)
-        skill_id_counter +=1
+        sk = Skill(id = neoskill_id_counter, name=skill["name"], mastery=categorymapper[skill["mastery"]])
+        NewSkills.append(sk)
+        neoskill_id_counter +=1
+    return RedirectResponse(url="/RetrieveSkills", status_code=303)
+    
+@app.post("/UpdateNeoSkill/{skill_id}")
+async def update_skill(skill_id: int, content: str = Form(None), mastery: str = Form(None)):
+    skill = next((t for t in Skills if t.id == skill_id), None)
+    if not skill:
+        raise HTTPException(status_code=404, detail="Skill not Found!")
+    skill.name = content
+    skill.mastery = int(mastery)
+    return RedirectResponse(url="/RetrieveSkills", status_code=303)
+    
+@app.get("/DeleteNeoSkill/{skill_id}")
+async def delete_skill(skill_id: int):
+    global Skills
+    Skills = [s for s in Skills if s.id != skill_id]
+    return RedirectResponse(url="/RetrieveSkills", status_code=303)
 
-noveltymapper = {
-        "unfamiliar":10,
-        "beginner":30,
-        "moderate":50, 
-        "familiar":70, 
-        "expert":90
-    }
-tasks_novelty = []
+
         
 @app.post("/TaskNovelty")
 async def task_novelty():
-    global tasks_novelty
+    noveltymapper = {
+            "unfamiliar":10,
+            "beginner":30,
+            "moderate":50, 
+            "familiar":70, 
+            "expert":90
+        }
+    tasks_novelty = []
+    # global tasks_novelty
     for task in Tasks:
         novelty = noveltymapper[extract_json(agents.TaskNovelty(task.name))["task_novelty"]]
         tasks_novelty.append({task.id: novelty})
     
+
+# Routes for handling AI Task Object:
+NeoTasks = []
+neotask_id_counter = task_id_counter
+
+@app.post("/AITasks")
+async def ai_tasks(request: Request):
+    global neotask_id_counter, NeoTasks
+    neotasks = agents
+    NT = extract_json(neotasks)
+    for t in NT: 
+        task = Task(id=neotask_id_counter, name=t["content"], date=datetime.now())
+        NeoTasks.append(task)
+        neotask_id_counter += 1
+    return RedirectResponse(url="/", status_code=303)
 
 
 # Routes for handling Output
@@ -253,3 +286,8 @@ async def Compute():
 
 
 
+## Route to serve the HTML form
+# @app.get("/Experience", response_class=HTMLResponse)
+# async def upload_form():
+#     with open("templates/experience.html", "r") as file:
+#         return HTMLResponse(content=file.read())

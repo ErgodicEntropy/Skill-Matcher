@@ -1,4 +1,4 @@
-function LinkClickS(skillId){
+function LinkClickNS(skillId){
     // Show the update overlay
      document.getElementById("update-overlay").style.display = 'block'
      document.getElementById("update-skill-div").style.display = 'block'
@@ -7,10 +7,10 @@ function LinkClickS(skillId){
     const updateForm = document.getElementById('update-skill-form');
     // Set the form action dynamically
     const SkillValue = document.getElementById("skill-data").dataset.skillId
-    updateForm.action =  `/UpdateSkill/${SkillValue}` 
+    updateForm.action =  `/UpdateNeoSkill/${SkillValue}` 
  
     // Optionally, populate the input field with the current task name
-    const taskName = document.querySelector(`a[onclick="LinkClick(${skillId})"]`).closest('tr').querySelector('td').innerText;
+    const taskName = document.querySelector(`a[onclick="LinkClickNS(${skillId})"]`).closest('tr').querySelector('td').innerText;
     document.getElementById('update-skill-name').value = taskName;
  
     // Prevent the default link behavior

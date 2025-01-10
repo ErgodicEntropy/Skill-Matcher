@@ -5,14 +5,11 @@ from langchain.memory import ChatMessageHistory, ConversationBufferMemory
 from langchain.document_loaders import PyPDFLoader, DirectoryLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings import HuggingFaceEmbeddings
-from langchain.vectorstores import FAISS, Chroma, Pinecone
-
-import chainlit as cl
-import os
+from langchain.vectorstores import FAISS
 import prompts
 
-llm = Cohere()
-os.environ["COHERE_API_KEY"] = ''
+
+llm = Cohere(cohere_api_key="")
 
 DB_FAISS_PATH = 'vectorstore/db_faiss'
 
@@ -74,8 +71,8 @@ def create_vector_db(DATA_PATH):
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=500,
                                                    chunk_overlap=50)
     texts = text_splitter.split_documents(documents)
-
-    embeddings = HuggingFaceEmbeddings(model_name='sentence-transformers/all-MiniLM-L6-v2',
+        
+    embeddings = HuggingFaceEmbeddings(model_name='sentence-transformers/multi-qa-mpnet-base-dot-v1',
                                        model_kwargs={'device': 'cpu'})
 
     db = FAISS.from_documents(texts, embeddings)
@@ -85,7 +82,7 @@ def create_vector_db(DATA_PATH):
 
 def Retrieve_SKills():
     # Retrieve vector database
-    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2",
+    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/multi-qa-mpnet-base-dot-v1",
                                        model_kwargs={'device': 'cpu'})
     db = FAISS.load_local(DB_FAISS_PATH, embeddings)
     #Retrieval QA Chain
@@ -101,7 +98,7 @@ def Retrieve_SKills():
 
 def TaskNovelty(task: str): #task name
     # Retrieve vector database
-    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2",
+    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/multi-qa-mpnet-base-dot-v1",
                                        model_kwargs={'device': 'cpu'})
     db = FAISS.load_local(DB_FAISS_PATH, embeddings)
     #Retrieval QA Chain
@@ -118,9 +115,8 @@ def TaskNovelty(task: str): #task name
 
 #Conversation with CV (QA)
 def CV_Chat(message: str):
-    welcome_message = "Welcome to the ExperienceAI! Let's talk about your experience based on the CV you provided!"
     # Retrieve vector database
-    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2",
+    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/multi-qa-mpnet-base-dot-v1",
                                        model_kwargs={'device': 'cpu'})
     db = FAISS.load_local(DB_FAISS_PATH, embeddings)
 

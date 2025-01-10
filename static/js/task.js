@@ -1,5 +1,5 @@
 function LinkClick(taskId){
-   // Show the update overlay
+    // Show the update overlay
     document.getElementById("update-overlay").style.display = 'block'
     document.getElementById("update-content").style.display = 'block'
 
@@ -9,9 +9,9 @@ function LinkClick(taskId){
    updateForm.action =  `/update/${taskId}` 
 
    // Optionally, populate the input field with the current task name
-   const taskName = document.querySelector(`a[onclick="LinkClick(${taskId})"]`).closest('tr').querySelector('td').innerText;
+   const taskName = document.querySelector(`a[onclick*="LinkClick('${taskId}')"]`).closest('tr').querySelector('td').innerText.trim();
    document.getElementById('content').value = taskName;
-
+    
    // Prevent the default link behavior
    return false;}
 

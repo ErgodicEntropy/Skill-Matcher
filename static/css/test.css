@@ -1,0 +1,515 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body Styling */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+    line-height: 1.6;
+    margin: 20px;
+}
+
+/* Main Content */
+
+.container {
+    display: flex;
+    gap: 10px;
+    width: 80%;
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#left-div {
+    flex: 1; /* Take up available space */
+    background-color: #f4f4f9; /* Optional: Add background color */
+    padding: 20px; /* Optional: Add padding */
+    border-radius: 8px; /* Optional: Add rounded corners */
+}
+#right-div {
+    flex: 1; /* Take up available space */
+    background-color: #e0e0f0; /* Optional: Add background color */
+    padding: 20px; /* Optional: Add padding */
+    border-radius: 8px; /* Optional: Add rounded corners */
+}
+
+.content {
+    width: 80%;
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+h1 {
+    font-size: 36px;
+    color: #333;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+p {
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #007bff;
+    color: #fff;
+    font-weight: bold;
+}
+
+td {
+    background-color: #f9f9f9;
+}
+
+td a {
+    color: #e74c3c;
+    text-decoration: none;
+    margin-right: 10px;
+}
+
+td a:hover {
+    text-decoration: underline;
+}
+
+/* Form Styling */
+form {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+#UploadForm {
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    padding:20px;
+}
+
+/* General styling for the form */
+.add-skill-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    font-family: Arial, sans-serif;
+}
+
+/* Style for the input text field */
+.skill-input-text {
+    width: 200px; /* Narrow input text */
+    height: 30px; /* Height of the input text */
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    margin-bottom: 1rem; /* Space between input text and range */
+}
+
+/* Positioning the range slider below the text input */
+
+input[type="range"] {
+    flex: 1;
+}
+
+.range-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    width: 220px;
+    justify-content: space-between;
+}
+
+.range-slider {
+    display: flex;
+    flex:1;
+    justify-content: center;
+    position: relative;
+}
+
+#skill-range {
+    position: absolute; /* Position the value relative to the slider */
+    bottom: -20px; /* Move the value below the slider */
+    left: 53%; /* Center horizontally */
+    transform: translateX(-50%); /* Adjust for exact centering */
+    font-size: 0.9rem; /* Adjust font size as needed */
+    color: #333; /* Adjust color as needed */
+}
+
+#skill-range-update {
+    position: absolute; /* Position the value relative to the slider */
+    bottom: -20px; /* Move the value below the slider */
+    left: 53%; /* Center horizontally */
+    transform: translateX(-50%); /* Adjust for exact centering */
+    font-size: 0.9rem; /* Adjust font size as needed */
+    color: #333; /* Adjust color as needed */
+}
+
+.range-value {
+    font-size: 0.9rem;
+    margin-left: 0.5rem;
+}
+
+.range-label {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.task-submit-button {
+    padding: 10px 20px;
+    margin-left: 10px;
+    background-color: #28a745;
+    border: none;
+    color: white;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.task-submit-button:hover{
+    background-color: #218838;
+
+}
+
+.task-input-text { 
+    padding: 10px;
+    width: 30%;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+
+}
+
+/* Style for the submit button */
+.skill-submit-button {
+    width: 100px; /* Same width as the input text */
+    height: 40px; /* Same height as the input text */
+    padding: 0.5rem;
+    font-size: 1rem;
+    color: white;
+    background-color: #28a745;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.3s;
+    position: absolute; 
+    bottom: -20px;
+    top:200%; 
+    left: 57%; /* Center horizontally */
+    transform: translateX(-50%); /* Adjust for exact centering */
+}
+
+.skill-submit-button:hover {
+    background-color: #0056b3;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .content {
+        width: 90%;
+    }
+
+    table th, table td {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    form input[type="text"] {
+        width: 30%;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 28px;
+    }
+
+    form input[type="text"] {
+        width: 30%;
+    }
+
+    form input[type="submit"] {
+        width: 30%;
+    }
+}
+
+/* Ensuring responsive layout */
+@media (max-width: 600px) {
+    .skill-input-text,
+    .skill-submit-button {
+        width: 100%;
+    }
+
+    .range-container {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+/* Overlay */
+#update-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Dim the background */
+    z-index: 1000;
+    backdrop-filter: blur(10px) contrast(20%); /* Combine filters */
+}
+
+#update-task-div {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60%;
+    height:65%;
+    max-width: 400px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background-color: #fff;
+    padding: 5px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    z-index: 1001;
+    display: none;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+#update-skill-div {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60%;
+    height:65%;
+    max-width: 400px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background-color: #fff;
+    padding: 5px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    z-index: 1001;
+    display: none;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+
+/* General styling for the form */
+#update-skill-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    font-family: Arial, sans-serif;
+}
+
+/* Style for the input text field */
+#update-skill-name {
+    width: 200px; /* Narrow input text */
+    height: 30px; /* Height of the input text */
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    margin-bottom: 1rem; /* Space between input text and range */
+}
+
+/* Positioning the range slider below the text input */
+
+#update-skill-mastery {
+    flex: 1;
+}
+
+.range-value {
+    font-size: 0.9rem;
+    margin-left: 0.5rem;
+}
+
+.range-label {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+/* Style for the submit button */
+#update-task-input {
+    width: 30%; /* Same width as the input text */
+    height: 30%; /* Same height as the input text */
+    padding: 0.5rem;
+    font-size: 1rem;
+    color: white;
+    background-color: #28a745;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    transform: background-color 1.2s;
+}
+
+#update-task-input:hover {
+    background-color: #0056b3;
+}
+
+#update-skill-input {
+    width: 30%; /* Same width as the input text */
+    height: 30%; /* Same height as the input text */
+    padding: 0.5rem;
+    font-size: 1rem;
+    color: white;
+    background-color: #28a745;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    transform: background-color 1.2s;
+}
+
+#update-skill-input:hover {
+    background-color: #0056b3;
+}
+
+/* Ensuring responsive layout */
+@media (max-width: 600px) {
+    #update-skill-name,
+    #update-input {
+        width: 100%;
+    }
+
+    .range-container {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+
+#done-input {
+    width: 80px; /* Same width as the input text */
+    height: 30px; /* Same height as the input text */
+    padding: 0.5rem;
+    font-size: 1rem;
+    color: white;
+    background-color: green;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+}
+
+#done-input:hover {
+    background-color: #0056b3;
+}
+
+@media (max-width: 600px){
+    #done-input {
+        width:100%;
+    }
+}
+
+/* Experience */
+
+input[type="file"] {
+    margin-bottom: 10px;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+#loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1001; /* Ensure it's above other elements */
+    backdrop-filter: blur(10px) contrast(20%); /* Combine filters */
+    display: none; /* Hidden by default */
+}
+
+#loading-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60%;
+    height:65%;
+    text-align: center;
+    background-color: rgba(43, 43, 61, 0.95); /* Semi-transparent dark background */
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    z-index: 1002;
+}
+
+#loading-progress {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #4caf50;
+    border-top: 4px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite; /* Loop animation */
+    margin: 0 auto 15px auto;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+#loading-message {
+    color: #f1f1f1;
+    font-size: 1.2rem;
+    margin-top: 15px;
+}

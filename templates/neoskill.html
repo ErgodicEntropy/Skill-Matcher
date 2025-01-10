@@ -16,35 +16,19 @@
                 <th>Mastery</th>
                 <th>Actions</th>
             </tr>
-            {% for skill in Skills %}
+            {% for skill in NeoSkills %}
             <tr>
                 <td>{{ skill.name }}</td>
                 <td>{{ skill.mastery }}</td>
                 <td>
                     <div id="skill-data" data-skill-id="{{ skill.id }}" style="display:none;"></div>
-                    <a href="#" onclick="LinkClickS('{{ skill.id }}')">Update</a>
-                    <a href="/DeleteSkill/{{skill.id}}">Delete</a>
+                    <a href="#" onclick="LinkClickNS('{{ skill.id }}')">Update</a>
+                    <a href="/DeleteNeoSkill/{{skill.id}}">Delete</a>
                 </td>
             </tr>
             {% endfor %}
         </table>
     </div>
-    <div>
-        <form action="/AddSkill" method="POST" class="add-skill-form">
-            <input type="text" id="skill-name" name="content" placeholder="Add Skill" class="input-text">
-            <label for="mastery">Mastery Level:</label>
-            <div class="range-container">
-                <span class="range-label">Beginner</span>
-                <div class="range-slider">
-                    <input type="range" id="skill-mastery" name="mastery" min="0" max="100" value="50" oninput="AddSpanValue(this.value)" required>
-                    <span class="range-value" id="skill-range">50</span>
-                </div>
-                <span class="range-label">Expert</span>
-            </div>
-            <input type="submit" value="Submit" class="submit-button">
-        </form>
-    </div>
-
     <div id="update-overlay">
         <div id="update-skill-div">
             <h1>Update Task</h1>
@@ -64,12 +48,12 @@
         </div>
     </div>
     <div>
-        <form action="/Experience" method="GET">
+        <form action="/Compute" method="GET">
             <input type="submit" id="done-input" value="Done">
         </form>    
     </div>
 
-    <script src="{{ url_for('static', path='js/skill.js') }}"></script>
+    <script src="{{ url_for('static', path='js/neoskill.js') }}"></script>
 </body>
 </html>
 

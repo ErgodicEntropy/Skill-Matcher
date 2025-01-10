@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skill List</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='css/data.css') }}">
+</head>
+<body>
+    <div class="content">
+        <h1>Skills</h1>
+        <p>Add a New Skill</p>
+        <table id="skill-table">
+            <tr>
+                <th>Name</th>
+                <th>Mastery</th>
+                <th>Actions</th>
+            </tr>
+            {% for skill in Skills %}
+            <tr>
+                <td>{{ skill.name }}</td>
+                <td>{{ skill.mastery }}</td>
+                <td>
+                    <div id="skill-data" data-skill-id="{{ skill.id }}" style="display:none;"></div>
+                    <a href="#" onclick="LinkClickS('{{ skill.id }}')">Update</a>
+                    <a href="/DeleteSkill/{{skill.id}}">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        <form action="/AddSkill" method="POST" class="add-skill-form">
+            <input type="text" id="skill-name" name="content" placeholder="Add Skill" class="input-text">
+            <label for="mastery">Mastery Level:</label>
+            <div class="range-container">
+                <span class="range-label">Beginner</span>
+                <div class="range-slider">
+                    <input type="range" id="skill-mastery" name="mastery" min="0" max="100" value="50" oninput="AddSpanValue(this.value)" required>
+                    <span class="range-value" id="skill-range">50</span>
+                </div>
+                <span class="range-label">Expert</span>
+            </div>
+            <input type="submit" value="Submit" class="submit-button">
+        </form>
+    </div>
+
+    <div id="update-overlay">
+        <div id="update-skill-div">
+            <h1>Update Task</h1>
+            <form id="update-skill-form" method="POST">
+                <input type="text" id="update-skill-name" name="content" required>
+                <label for="mastery">Mastery Level:</label>
+                <div class="range-container">
+                    <span class="range-label">Beginner</span>
+                    <div class="range-slider">
+                        <input type="range" id="update-skill-mastery" name="mastery" min="0" max="100" value="50" oninput="UpdateSpanValue(this.value)" required>
+                        <span class="range-value" id="skill-range-update">50</span>
+                    </div>
+                    <span class="range-label">Expert</span>
+                </div>
+                <input type="submit" id="update-input" value="Update Skill"> 
+            </form>
+        </div>
+    </div>
+    <div class="content">
+        <h1>Upload Your CV</h1>
+        <!-- <p>Acceptable File Formats: PDF, DOC, DOCX</p> -->
+        <!-- <form action="/UploadFile" method="POST" enctype="multipart/form-data" id="UploadForm"> -->
+        <form id="UploadForm">
+            <label for="cv">Choose a file:</label>
+            <input type="file" id="cv" name="cv" accept=".pdf,.doc,.docx" required>
+            <button type="submit">Upload</button>
+        </form>
+    </div>
+    <div>
+        <form id="RedirectForm" action="/AddNeoSkills" method="POST">
+            <input type="hidden" name="hidden-input" value="None">
+            <button type="submit">Done</button>
+        </form>
+    </div>
+
+    <div id="loading-overlay">
+        <div id="loading-container">
+            <div id="loading-progress"></div>
+            <p id="loading-message"></p>
+        </div>
+    </div> 
+
+    <script src="{{ url_for('static', path='js/data.js') }}"></script>
+</body>
+</html>
+
+
+
