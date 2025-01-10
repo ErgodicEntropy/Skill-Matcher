@@ -221,11 +221,6 @@ input[type="range"] {
     cursor: pointer;
     text-align: center;
     transition: background-color 0.3s;
-    position: absolute; 
-    bottom: -20px;
-    top:200%; 
-    left: 57%; /* Center horizontally */
-    transform: translateX(-50%); /* Adjust for exact centering */
 }
 
 .skill-submit-button:hover {

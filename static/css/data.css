@@ -11,10 +11,35 @@ body {
     background-color: #f4f4f9;
     color: #333;
     line-height: 1.6;
-    margin: 20px; 
+    margin: 20px;
 }
 
 /* Main Content */
+
+.container {
+    display: flex;
+    gap: 10px;
+    width: 80%;
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#left-div {
+    flex: 1; /* Take up available space */
+    background-color: #f4f4f9; /* Optional: Add background color */
+    padding: 20px; /* Optional: Add padding */
+    border-radius: 8px; /* Optional: Add rounded corners */
+}
+#right-div {
+    flex: 1; /* Take up available space */
+    background-color: #e0e0f0; /* Optional: Add background color */
+    padding: 20px; /* Optional: Add padding */
+    border-radius: 8px; /* Optional: Add rounded corners */
+}
+
 .content {
     width: 80%;
     margin: 20px auto;
@@ -79,6 +104,13 @@ form {
     margin-top: 20px;
 }
 
+#UploadForm {
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    padding:20px;
+}
+
 /* General styling for the form */
 .add-skill-form {
     display: flex;
@@ -89,7 +121,7 @@ form {
 }
 
 /* Style for the input text field */
-.input-text {
+.skill-input-text {
     width: 200px; /* Narrow input text */
     height: 30px; /* Height of the input text */
     padding: 0.5rem;
@@ -101,22 +133,43 @@ form {
 }
 
 /* Positioning the range slider below the text input */
+
+input[type="range"] {
+    flex: 1;
+}
+
 .range-container {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 10px;
+    position: relative;
     width: 220px;
     justify-content: space-between;
 }
 
 .range-slider {
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    flex:1;
+    justify-content: center;
+    position: relative;
 }
 
-input[type="range"] {
-    flex: 1;
+#skill-range {
+    position: absolute; /* Position the value relative to the slider */
+    bottom: -20px; /* Move the value below the slider */
+    left: 53%; /* Center horizontally */
+    transform: translateX(-50%); /* Adjust for exact centering */
+    font-size: 0.9rem; /* Adjust font size as needed */
+    color: #333; /* Adjust color as needed */
+}
+
+#skill-range-update {
+    position: absolute; /* Position the value relative to the slider */
+    bottom: -20px; /* Move the value below the slider */
+    left: 53%; /* Center horizontally */
+    transform: translateX(-50%); /* Adjust for exact centering */
+    font-size: 0.9rem; /* Adjust font size as needed */
+    color: #333; /* Adjust color as needed */
 }
 
 .range-value {
@@ -129,28 +182,85 @@ input[type="range"] {
     color: #666;
 }
 
+.task-submit-button {
+    padding: 10px 20px;
+    margin-left: 10px;
+    background-color: #28a745;
+    border: none;
+    color: white;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.task-submit-button:hover{
+    background-color: #218838;
+
+}
+
+.task-input-text { 
+    padding: 10px;
+    width: 30%;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+
+}
+
 /* Style for the submit button */
-.submit-button {
-    width: 200px; /* Same width as the input text */
-    height: 30px; /* Same height as the input text */
+.skill-submit-button {
+    width: 100px; /* Same width as the input text */
+    height: 40px; /* Same height as the input text */
     padding: 0.5rem;
     font-size: 1rem;
     color: white;
-    background-color: #007bff;
+    background-color: #28a745;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     text-align: center;
+    transition: background-color 0.3s;
 }
 
-.submit-button:hover {
+.skill-submit-button:hover {
     background-color: #0056b3;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .content {
+        width: 90%;
+    }
+
+    table th, table td {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    form input[type="text"] {
+        width: 30%;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 28px;
+    }
+
+    form input[type="text"] {
+        width: 30%;
+    }
+
+    form input[type="submit"] {
+        width: 30%;
+    }
 }
 
 /* Ensuring responsive layout */
 @media (max-width: 600px) {
-    .input-text,
-    .submit-button {
+    .skill-input-text,
+    .skill-submit-button {
         width: 100%;
     }
 
@@ -171,6 +281,26 @@ input[type="range"] {
     background: rgba(0, 0, 0, 0.5); /* Dim the background */
     z-index: 1000;
     backdrop-filter: blur(10px) contrast(20%); /* Combine filters */
+}
+
+#update-task-div {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60%;
+    height:65%;
+    max-width: 400px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background-color: #fff;
+    padding: 5px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    z-index: 1001;
+    display: none;
+    text-align: center;
+    box-sizing: border-box;
 }
 
 #update-skill-div {
@@ -216,19 +346,6 @@ input[type="range"] {
 }
 
 /* Positioning the range slider below the text input */
-.range-container {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    width: 220px;
-    justify-content: space-between;
-}
-
-.range-slider {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
 
 #update-skill-mastery {
     flex: 1;
@@ -245,20 +362,39 @@ input[type="range"] {
 }
 
 /* Style for the submit button */
-#update-input {
-    width: 80px; /* Same width as the input text */
-    height: 30px; /* Same height as the input text */
+#update-task-input {
+    width: 30%; /* Same width as the input text */
+    height: 30%; /* Same height as the input text */
     padding: 0.5rem;
     font-size: 1rem;
     color: white;
-    background-color: #007bff;
+    background-color: #28a745;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     text-align: center;
+    transform: background-color 1.2s;
 }
 
-#update-input:hover {
+#update-task-input:hover {
+    background-color: #0056b3;
+}
+
+#update-skill-input {
+    width: 30%; /* Same width as the input text */
+    height: 30%; /* Same height as the input text */
+    padding: 0.5rem;
+    font-size: 1rem;
+    color: white;
+    background-color: #28a745;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    transform: background-color 1.2s;
+}
+
+#update-skill-input:hover {
     background-color: #0056b3;
 }
 
@@ -371,4 +507,4 @@ button:hover {
     color: #f1f1f1;
     font-size: 1.2rem;
     margin-top: 15px;
-}    
+}

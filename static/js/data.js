@@ -1,3 +1,27 @@
+// Task.js
+function LinkClick(taskId){
+    // Show the update overlay
+    document.getElementById("update-overlay").style.display = 'block'
+    document.getElementById("update-task-div").style.display = 'block'
+
+   // Save the task ID in a hidden input or JavaScript variable
+   const updateForm = document.getElementById('update-form-clicker');
+   // Set the form action dynamically
+   updateForm.action =  `/UpdateTask/${taskId}` 
+
+   // Optionally, populate the input field with the current task name
+   const taskName = document.querySelector(`a[onclick*="LinkClick('${taskId}')"]`).closest('tr').querySelector('td').innerText.trim();
+   document.getElementById('content').value = taskName;
+    
+   // Prevent the default link behavior
+   return false;}
+
+document.getElementById("update-input").onsubmit = () => {
+    document.getElementById("update-overlay").style.display = 'none'
+    document.getElementById("update-task-div").style.display = 'none'
+    
+}
+
 // Skill.js
 function LinkClickS(skillId){
     // Show the update overlay
@@ -17,9 +41,9 @@ function LinkClickS(skillId){
     // Prevent the default link behavior
     return false;}
  
- document.getElementById("update-input").onsubmit = () => {
+document.getElementById("update-input").onsubmit = () => {
      document.getElementById("update-overlay").style.display = 'none'
-     document.getElementById("update-content").style.display = 'none'
+     document.getElementById("update-skill-div").style.display = 'none'
      
  }
  
@@ -51,10 +75,6 @@ function updateLoadingMessage(message) {
 
 document.getElementById('UploadForm').addEventListener('submit', function (event) {
     event.preventDefault(); // Prevent default form submission
-
-    showLoading();
-    updateLoadingMessage('Processing your request. Please wait...');
-
     // Gather all form data
     const formData = new FormData(this);
 
@@ -64,6 +84,7 @@ document.getElementById('UploadForm').addEventListener('submit', function (event
         body: formData
     }).then(response => {
         if (response.ok){
+            showLoading();
             updateLoadingMessage('Almost there! Thanks for your patience');
         }
         else {
@@ -76,6 +97,10 @@ document.getElementById('UploadForm').addEventListener('submit', function (event
         updateLoadingMessage('Something went wrong. Please try again.');
         hideLoading();
     })
+    setTimeout(() => {
+        updateLoadingMessage('Your CV has been uploaded successfully!');
+    }, 3000);
+
 });
 
 document.getElementById('RedirectForm').addEventListener('submit', function (event) {
@@ -88,7 +113,7 @@ document.getElementById('RedirectForm').addEventListener('submit', function (eve
     const formData = new FormData(this);
 
     // Submit to the /data endpoint
-    fetch('/AddNeoSkills', {
+    fetch('/SysData', {
         method: 'POST',
         body: formData
     }).then(response => {
