@@ -73,36 +73,6 @@ function updateLoadingMessage(message) {
    document.getElementById('loading-message').textContent = message;
 }
 
-document.getElementById('UploadForm').addEventListener('submit', function (event) {
-   event.preventDefault(); // Prevent default form submission
-   // Gather all form data
-   const formData = new FormData(this);
-
-   // Submit to the /data endpoint
-   fetch('/UploadFile', {
-       method: 'POST',
-       body: formData
-   }).then(response => {
-       if (response.ok){
-           showLoading();
-           updateLoadingMessage('Almost there! Thanks for your patience');
-       }
-       else {
-           console.error('Error submitting to /data:', response.status);
-           updateLoadingMessage('Something went wrong. Please try again.');
-           hideLoading();
-       }
-   }).catch(error => {
-       console.error('Error submitting to /data:', error);
-       updateLoadingMessage('Something went wrong. Please try again.');
-       hideLoading();
-   })
-   setTimeout(() => {
-       updateLoadingMessage('Your CV has been uploaded successfully!');
-   }, 3000);
-
-});
-
 document.getElementById('RedirectForm').addEventListener('submit', function (event) {
    event.preventDefault(); // Prevent default form submission
 
@@ -113,7 +83,7 @@ document.getElementById('RedirectForm').addEventListener('submit', function (eve
    const formData = new FormData(this);
 
    // Submit to the /data endpoint
-   fetch('/SysData', {
+   fetch('/Output', {
        method: 'POST',
        body: formData
    }).then(response => {

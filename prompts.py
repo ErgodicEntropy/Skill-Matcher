@@ -154,6 +154,34 @@ TaskNovelty = PromptTemplate(
     """
 )
 
+SuggestTask = PromptTemplate(
+    input_variables=["skills"],
+    template="""
+    You are a task suggestion assistant. Based on the user's skills, suggest 5 relevant tasks they can do. The skills provided are: {skills}. Return the tasks in the following JSON format:
+
+    [
+        {{
+            "name": "name of the task"
+        }},
+        {{
+            "name": "name of task2"
+        }},
+        {{
+            "name": "name of task3"
+        }},
+        {{
+            "name": "name of task4"
+        }},
+        {{
+            "name": "name of task5"
+        }}
+    ]
+
+    Ensure the tasks are specific, actionable, and tailored to the user's skills. 
+    IMPORTANT: Output ONLY the JSON and NOTHING ELSE. No additional remarks, explanations, or text.
+    """
+)
+
 SingleTaskReq = PromptTemplate(
     input_variables=["task"],  # Input variable: task
     template="""

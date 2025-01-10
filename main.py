@@ -205,6 +205,7 @@ categorymapper = {
         "high":70, 
         "extremely high":90
     }
+
 AISkills = []
 aiskill_id_counter = skill_id_counter
 
@@ -215,9 +216,10 @@ async def display_neoskills(request: Request):
 
 @app.post("/ShowAITasks")
 async def ai_tasks():
-    global aiskill_id_counter, AITasks
-    neotasks = agents
-    NT = extract_json(neotasks)
+    global aiskill_id_counter, AITasks, Skills
+    inputskill = ",".join([skill.name for skill in Skills])
+    newtasks = agents.SuggestTasks(inputskill)
+    NT = extract_json(newtasks)
     for t in NT: 
         task = Task(id=aitask_id_counter, name=t["content"], date=datetime.now())
         AITasks.append(task)
@@ -267,26 +269,35 @@ async def delete_skill(skill_id: int):
 
 
 
-@app.post("/TaskNovelty")
-async def task_novelty():
-    noveltymapper = {
-            "unfamiliar":10,
-            "beginner":30,
-            "moderate":50, 
-            "familiar":70, 
-            "expert":90
-        }
-    tasks_novelty = []
-    # global tasks_novelty
-    for task in Tasks:
-        novelty = noveltymapper[extract_json(agents.TaskNovelty(task.name))["task_novelty"]]
-        tasks_novelty.append({task.id: novelty})
-
 
 # Routes for handling Output
 @app.post("/Output")
 async def Compute(): 
-    pass
+    #Update Data
+    global Skills, AISkills, Tasks, AITasks
+    AT = len(AITasks)
+    AS = len(AISkills)
+    for k in range(AT):
+        Tasks.append(AITasks[k])
+    for j in range(AS):
+        Skills.append(AISkills[j])
+
+    #Compute Skill Transferability
+    
+    TaskReq = []
+    for task in Tasks:
+        skillsreq = agents.TaskReq(task)
+        SR = extract_json(skillsreq)
+        TaskReq.append(SR)
+
+    TaskReqStr = ",".join([skill["name"] for skill in TaskReq])
+    TaskReqStr = ",".join([skill["mastery"] for skill in TaskReq])
+    SkillStr = ",".join([skill.name for skill in Skills])
+    Common_Skills = []
+
+
+
+
 
 
 
@@ -295,3 +306,19 @@ async def Compute():
 # async def upload_form():
 #     with open("templates/experience.html", "r") as file:
 #         return HTMLResponse(content=file.read())
+
+# @app.post("/TaskNovelty")
+# async def task_novelty():
+#     noveltymapper = {
+#             "unfamiliar":10,
+#             "beginner":30,
+#             "moderate":50, 
+#             "familiar":70, 
+#             "expert":90
+#         }
+#     tasks_novelty = []
+#     # global tasks_novelty
+#     for task in Tasks:
+#         novelty = noveltymapper[extract_json(agents.TaskNovelty(task.name))["task_novelty"]]
+#         tasks_novelty.append({task.id: novelty})
+

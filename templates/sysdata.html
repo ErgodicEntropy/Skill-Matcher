@@ -17,7 +17,7 @@
                     <th>Date</th>
                     <th>Action</th>
                 </tr>
-                {% for task in Tasks %}
+                {% for task in NewTasks %}
                 <tr>
                     <td>{{ task.name }}</td>
                     <td>{{ task.date }}</td>
@@ -28,10 +28,6 @@
                 </tr>
                 {% endfor %}    
             </table>
-            <form action="/AddTask" method="POST">
-                <input type="text" id="content" name="content" placeholder="Add Task" class="task-input-text">
-                <input type="submit" value="Submit" class="task-submit-button">
-            </form>    
         </div>
         <div id="right-div">
             <h1>Skills</h1>
@@ -42,7 +38,7 @@
                     <th>Mastery</th>
                     <th>Actions</th>
                 </tr>
-                {% for skill in Skills %}
+                {% for skill in NewSkills %}
                 <tr>
                     <td>{{ skill.name }}</td>
                     <td>{{ skill.mastery }}</td>
@@ -54,32 +50,19 @@
                 </tr>
                 {% endfor %}
             </table>
-            <form action="/AddSkill" method="POST" class="add-skill-form">
-                <input type="text" id="skill-name" name="content" placeholder="Add Skill" class="skill-input-text">
-                <label for="mastery">Mastery Level:</label>
-                <div class="range-container">
-                    <span class="range-label">Beginner</span>
-                    <div class="range-slider">
-                        <input type="range" id="skill-mastery" name="mastery" min="0" max="100" value="50" oninput="AddSpanValue(this.value)" required>
-                    </div>
-                    <span class="range-label">Expert</span>
-                    <span class="range-value" id="skill-range">50</span>
-                </div>
-                <input type="submit" value="Submit" class="skill-submit-button">
-            </form>
         </div>
     </div>
 
     <div id="update-overlay">
         <div id="update-task-div">
-            <h1>Update Task</h1>
+            <h1>Correct Task</h1>
             <form id="update-form-clicker" method="POST">
                 <input type="text" name="content" id="content" required>
                 <input type="submit" id="update-task-input" value="Update Task"> 
             </form>
         </div>    
         <div id="update-skill-div">
-            <h1>Update Skill</h1>
+            <h1>Correct Skill</h1>
             <form id="update-skill-form" method="POST">
                 <input type="text" id="update-skill-name" name="content" required>
                 <label for="mastery">Mastery Level:</label>
