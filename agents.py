@@ -65,21 +65,6 @@ def SuggestTasks(skills: str):
     memory.chat_memory.add_message(skills)
     return resp 
 
-def Recommend(task):
-    agent = LLMChain(llm=llm, prompt = AS)
-    resp = agent.run({"task": task})
-    memory.chat_memory.add_ai_message(resp)
-    memory.chat_memory.add_message(task)
-    return resp 
-
-def Explain(task, rank, skills_required, user_skills):
-    inputs = {"task": task, "rank": rank, "skills_required": skills_required, "user_skills": user_skills}
-    agent = LLMChain(llm=llm, prompt=RE)
-    resp = agent.run(inputs)
-    memory.chat_memory.add_ai_message(resp)
-    memory.chat_memory.add_message(task)
-    return resp
-
 # Create vector database
 def create_vector_db(DATA_PATH):
     # Load documents from PDF files
