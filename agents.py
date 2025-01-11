@@ -65,6 +65,7 @@ def SuggestTasks(skills: str):
     memory.chat_memory.add_message(skills)
     return resp 
 
+
 # Create vector database
 def create_vector_db(DATA_PATH):
     # Load documents from PDF files

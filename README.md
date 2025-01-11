@@ -193,3 +193,64 @@ In a world where burnout is common and productivity is key, SkillSync bridges th
    - **Role**: A gamified feature that incentivizes users to complete tasks by offering rewards (e.g., badges, points, or progress tracking). It motivates users to stay engaged and provides positive reinforcement for achieving their goals.  
 
 
+
+# Use Instructions
+
+## Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+- **Python 3.11.9**
+- **pip** (Python package manager)
+- **Git** (for cloning the repository)
+- **Virtual Environment** (optional but recommended)
+
+---
+
+## Installation
+
+**Clone the Repository**:
+   ```bash
+   git clone https://github.com/your-username/skillsync.git
+   cd skillsync
+```
+## Set Up a Virtual Environment (optional but recommended):
+
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+```
+## Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+## Start the FastAPI Server
+```bash
+uvicorn main:app --reload
+
+The --reload flag enables auto-reloading when code changes are detected.
+
+By default, the application will run on http://127.0.0.1:8000.
+
+Access the Application:
+Open your browser and navigate to http://127.0.0.1:8000.
+
+To explore the API documentation, visit http://127.0.0.1:8000/docs (Swagger UI) or http://127.0.0.1:8000/redoc (ReDoc).
+```
+
+### API Endpoints
+
+
+Here are the main API endpoints available in the project:
+
+#### Tasks
+- **GET** `/tasks` - Retrieve all tasks.
+- **POST** `/AddTask` - Add a new task.
+- **DELETE** `/delete_task/{task_id}` - Delete a task by ID.
+- **PUT** `/update_task/{task_id}` - Update a task by ID.
+
+#### Skills
+- **GET** `/skills` - Retrieve all skills.
+- **POST** `/AddSkill` - Add a new skill.
+- **DELETE** `/DeleteSkill/{skill_id}` - Delete a skill by ID.
+- **PUT** `/update_skill/{skill_id}` - Update a skill by ID.
