@@ -83,7 +83,7 @@ document.getElementById('RedirectForm').addEventListener('submit', function (eve
    const formData = new FormData(this);
 
    // Submit to the /data endpoint
-   fetch('/Output', {
+   fetch('/Compute', {
        method: 'POST',
        body: formData
    }).then(response => {

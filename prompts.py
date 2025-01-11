@@ -293,6 +293,36 @@ SingleTaskReq = PromptTemplate(
     """
 )
 
+CommonSkills = PromptTemplate(input_variables=["user_skills", "required_skills"], template="""
+You are a skill matching assistant. Your task is to identify the common skills between the user's skills and the required skills for a task. For each common skill, provide the user's mastery level and the task-specific weight.
+
+User Skills: {user_skills}
+Required Skills: {required_skills}
+
+Return the common skills in the following JSON format:
+[
+    {{
+        "name": "skill_name",
+        "mastery": "user_mastery_level",
+        "weight": "task_specific_weight"
+    }},
+    {{
+        "name": "skill_name",
+        "mastery": "user_mastery_level",
+        "weight": "task_specific_weight"
+    }},
+    {{
+        "name": "skill_name",
+        "mastery": "user_mastery_level",
+        "weight": "task_specific_weight"
+    }}
+]
+
+IMPORTANT: Return ONLY the JSON and NOTHING ELSE. Do not include any additional text or explanations.                              
+                              
+                              
+                              
+                              """)
 TasksReq = PromptTemplate(
     input_variables=["tasks_list"],   
     template="""

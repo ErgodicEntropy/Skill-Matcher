@@ -33,7 +33,21 @@ def extract_JSON(data_str:str) -> Union[list, dict]: # LLM Response
         print(f"Error extracting JSON: {e}")
         return {}
     
+def WeightCategory(weight: str):
+    WeightDict = {
+        "extremely low":10, "low":30, "moderate":50, "high":70, "extremely high":90
+    }
+    return WeightDict[weight]
+        
+def SkillTransfer(CommonSkills: Union[list,dict]): 
+    score = 0
+    for skill in CommonSkills:
+        value = int(skill["mastery"])*WeightCategory(skill["weight"])
+        score+= value
     
+    return score/len(CommonSkills)*100
+
+
 app = FastAPI()
 
 # Mount static files (e.g., CSS, JS)
@@ -90,6 +104,7 @@ class Task(BaseModel):
     id: int
     name: str = Field(min_length=1)
     date: datetime = Field(default_factory=datetime.now)
+    score : int = None
     # priority: str = "Medium"
     # status: str = "Not Started"
     # due_date: Optional[datetime] = None
@@ -115,6 +130,21 @@ class Task(BaseModel):
 #     notes="Ensure all sections are reviewed before submission.",
 #     category="Work"
 # )
+
+
+def TaskSort():
+    scorelist = [task.score for task in Tasks]
+    sortdict = {}
+    for k in range(len(scorelist)):
+        sortdict[scorelist[k]] = Tasks[k]
+        
+    sortedscorelist = sorted(scorelist, reverse=True)
+    OptimalTaskList = []
+    for k in range(len(sortedscorelist)):
+        taskelement = sortdict[sortedscorelist[k]]
+        OptimalTaskList.append(taskelement)
+    return OptimalTaskList
+
 
 # Routes for Task Object, Skill Object and Experience Object (Input Data):
 
@@ -271,10 +301,16 @@ async def delete_skill(skill_id: int):
 
 
 # Routes for handling Output
-@app.post("/Output")
-async def Compute(): 
+OptimalTaskList = []
+
+@app.get("/Output", response_class=HTMLResponse)
+async def read_output(request:Request):
+        return templates.TemplateResponse("output.html", {"request": request, "OptimalTasks": OptimalTaskList})
+
+@app.post("/Compute")
+async def Compute(request: Request): 
     #Update Data
-    global Skills, AISkills, Tasks, AITasks
+    global Skills, AISkills, Tasks, AITasks, OptimalTaskList
     AT = len(AITasks)
     AS = len(AISkills)
     for k in range(AT):
@@ -283,18 +319,17 @@ async def Compute():
         Skills.append(AISkills[j])
 
     #Compute Skill Transferability
-    
-    TaskReq = []
     for task in Tasks:
         skillsreq = agents.TaskReq(task)
-        SR = extract_json(skillsreq)
-        TaskReq.append(SR)
-
-    TaskReqStr = ",".join([skill["name"] for skill in TaskReq])
-    TaskReqStr = ",".join([skill["mastery"] for skill in TaskReq])
-    SkillStr = ",".join([skill.name for skill in Skills])
-    Common_Skills = []
-
+        required_skills = extract_json(skillsreq)
+        user_skills = ",".join([{"name": skill.name, "mastery": skill.mastery} for skill in Skills])
+        Common_Skills = agents.Commonalize(user_skills, required_skills)
+        CS = extract_json(Common_Skills)
+        score = SkillTransfer(CS)
+        task.score = score
+        
+    OptimalTaskList = TaskSort() 
+    return RedirectResponse(url="/Output", status_code=303)
 
 
 

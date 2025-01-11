@@ -23,6 +23,7 @@ SK = prompts.SkillRetrieval
 TN = prompts.TaskNovelty
 CVQA = prompts.CVQA
 SGT = prompts.SuggestTask
+CS = prompts.CommonSkills
 AS = prompts.AllocationStrategies
 RE = prompts.TaskRankExplanation
 
@@ -50,6 +51,12 @@ def TaskReq(task: str):
     memory.chat_memory.add_message(task)
     return resp 
 
+def Commonalize(user_skills : str, required_skills: str):
+    agent = LLMChain(llm=llm, prompt = CS)
+    resp = agent.run({"user_skills":user_skills, "required_skills": required_skills})
+    return resp 
+
+
 def SuggestTasks(skills: str):
     agent = LLMChain(llm=llm, prompt = SGT)
     resp = agent.run({"skills": skills})
@@ -73,7 +80,7 @@ def Explain(task, rank, skills_required, user_skills):
     return resp
 
 API_URL = "https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2"
-headers = {"Authorization": "Bearer hf_"}
+headers = {"Authorization": "Bearer hf_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}
 
 def get_embedding(text):
     """

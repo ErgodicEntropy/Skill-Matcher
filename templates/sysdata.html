@@ -23,11 +23,14 @@
                     <td>{{ task.date }}</td>
                     <td>
                         <a href="#" onclick="LinkClick('{{ task.id }}')">Correct</a>
-                        <a href="{{ url_for('delete_task', task_id=task.id) }}">Drop</a>
+                        <a href="/DeleteAITask/{{task.id}}">Drop</a>
                     </td>
                 </tr>
                 {% endfor %}    
             </table>
+            <form action="/ShowAITasks" method="POST">
+                <input type="submit" value="Show AI Tasks" class="task-submit-button">
+            </form>    
         </div>
         <div id="right-div">
             <h1>Skills</h1>
@@ -45,11 +48,14 @@
                     <td>
                         <div id="skill-data" data-skill-id="{{ skill.id }}" style="display:none;"></div>
                         <a href="#" onclick="LinkClickS('{{ skill.id }}')">Correct</a>
-                        <a href="/DeleteSkill/{{skill.id}}">Drop</a>
+                        <a href="/DeleteAISkill/{{skill.id}}">Drop</a>
                     </td>
                 </tr>
                 {% endfor %}
             </table>
+            <form action="/ShowAISkill" method="POST" class="add-skill-form">
+                <input type="submit" value="Skills based on your CV" class="skill-submit-button">
+            </form>
         </div>
     </div>
 
@@ -78,7 +84,7 @@
             </form>
         </div>
     </div>
-        
+
     <div id="loading-overlay">
         <div id="loading-container">
             <div id="loading-progress"></div>
@@ -86,13 +92,13 @@
         </div>
     </div> 
     <div>
-        <form id="RedirectForm" action="/Output" method="POST">
+        <form id="RedirectForm" action="/Compute" method="POST">
             <input type="hidden" name="hidden-input" value="None">
             <button type="submit">Done</button>
         </form>
     </div>
 
-    <script src="{{ url_for('static', path='js/data.js') }}"></script>
+    <script src="{{ url_for('static', path='js/sysdata.js') }}"></script>
 </body>
 </html>
 

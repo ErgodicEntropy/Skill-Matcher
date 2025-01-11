@@ -15,7 +15,7 @@
             <thead>
                 <tr>
                     <th>Task</th>
-                    <th>Energy Requirement</th>
+                    <th>Alignment Score</th>
                     <th>AI Assistance</th>
                     <th>Rank Explanation</th>
                     <th>Doing State</th>
@@ -23,10 +23,10 @@
                 </tr>
             </thead>
             <tbody>
-                {% for task in optimal_task_list %}
+                {% for task in OptimalTasks %}
                 <tr class="task-row" id="task-{{ loop.index }}">
-                    <td class="{% if task.finished %}completed{% endif %}">{{ task.content }}</td>
-                    <td>{{ task.energy_required }}</td>
+                    <td class="{% if task.finished %}completed{% endif %}">{{ task.name }}</td>
+                    <td>{{ task.score }}</td>
 
                     <td>
                         <a href="#" class="recommendation" onclick="getRecommendation('{{ loop.index }}')">Recommendation</a><br>
