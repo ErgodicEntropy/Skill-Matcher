@@ -441,7 +441,7 @@ input[type="file"] {
     margin-bottom: 10px;
 }
 
-button {
+input[type="submit"] {
     padding: 10px 20px;
     background-color: #28a745;
     color: white;
@@ -450,7 +450,7 @@ button {
     cursor: pointer;
 }
 
-button:hover {
+input[type="submit"]:hover {
     background-color: #218838;
 }
 

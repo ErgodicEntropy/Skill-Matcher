@@ -225,14 +225,12 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 @app.post("/UploadFile")
 async def upload_cv(cv: UploadFile = File(...)):
     try:
-        # Save the uploaded file
-        # file_path = os.path.join(UPLOAD_DIR, cv.filename)
         file_path = f"{UPLOAD_DIR}/{cv.filename}"
         with open(file_path, "wb") as buffer:
             buffer.write(await cv.read())
+        DATA_PATH = os.path.join('uploads')
+        agents.create_vector_db(DATA_PATH)
         return RedirectResponse(url="/SysData", status_code=303)
-        # return JSONResponse(content={"message": "File uploaded successfully!"}, status_code=200)
-        # return {"message": f"File '{cv.filename}' uploaded successfully!"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -258,8 +256,6 @@ aiskill_id_counter = skill_id_counter
 
 @app.get("/SysData", response_class=HTMLResponse)
 async def display_neoskills(request: Request):
-    DATA_PATH = os.path.join('uploads')
-    agents.create_vector_db(DATA_PATH)
     return templates.TemplateResponse("sysdata.html", {"request": request, "NewTasks":AITasks, "NewSkills": AISkills})
 
 @app.post("/ShowAITasks")
@@ -348,9 +344,6 @@ async def Compute(request: Request):
         
     OptimalTaskList = TaskSort() 
     return RedirectResponse(url="/Output", status_code=303)
-
-
-
 
 
 

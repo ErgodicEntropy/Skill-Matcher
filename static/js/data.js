@@ -73,10 +73,47 @@ function updateLoadingMessage(message) {
     document.getElementById('loading-message').textContent = message;
 }
 
-// Add event listener to the form
-document.getElementById('UploadForm').addEventListener('submit', function () {
-    // Show loading overlay and update message
-    showLoading();
-    updateLoadingMessage('Processing your request. Please wait...');
+document.addEventListener('DOMContentLoaded', function() {
+    const uploadForm = document.getElementById('UploadForm');
+    const loadingOverlay = document.getElementById('loading-overlay');
+    const loadingMessage = document.getElementById('loading-message');
 
+    if (uploadForm) {
+        uploadForm.addEventListener('submit', function(event) {
+            // Prevent the default form submission
+            event.preventDefault();
+
+            // Show the loading overlay
+            loadingOverlay.style.display = 'flex';
+            loadingMessage.textContent = 'Uploading your CV...';
+
+            // Create a FormData object from the form
+            const formData = new FormData(uploadForm);
+
+            // Send the form data using Fetch API
+            fetch(uploadForm.action, {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Handle successful upload
+                    loadingMessage.textContent = 'Upload complete!';
+                } else {
+                    // Handle upload error
+                    loadingMessage.textContent = 'Upload failed. Please try again.';
+                }
+            })
+            .catch(error => {
+                // Handle network error
+                loadingMessage.textContent = 'Network error. Please check your connection.';
+            })
+            .finally(() => {
+                // Hide the loading overlay after 2 seconds
+                setTimeout(() => {
+                    loadingOverlay.style.display = 'none';
+                }, 2000);
+            });
+        });
+    }
 });
