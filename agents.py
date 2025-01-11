@@ -8,13 +8,18 @@ from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import FAISS
 from typing import List 
 import prompts
-import requests
 import numpy as np 
-import faiss
+import os
+
+import sys
+print(sys.executable)
 
 llm = Cohere(cohere_api_key="")
+DB_FAISS_PATH = os.path.abspath(os.path.join('vectorstore', 'db_faiss'))
 
-DB_FAISS_PATH = 'vectorstore/db_faiss'
+os.makedirs(os.path.dirname(DB_FAISS_PATH), exist_ok=True)
+
+
 
 
 STR = prompts.SingleTaskReq
@@ -56,7 +61,6 @@ def Commonalize(user_skills : str, required_skills: str):
     resp = agent.run({"user_skills":user_skills, "required_skills": required_skills})
     return resp 
 
-
 def SuggestTasks(skills: str):
     agent = LLMChain(llm=llm, prompt = SGT)
     resp = agent.run({"skills": skills})
@@ -79,68 +83,30 @@ def Explain(task, rank, skills_required, user_skills):
     memory.chat_memory.add_message(task)
     return resp
 
-API_URL = "https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2"
-headers = {"Authorization": "Bearer hf_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}
-
-def get_embedding(text):
-    """
-    Get embeddings for a given text using the Hugging Face API.
-    """
-    payload = {
-        "inputs": text
-    }
-    response = requests.post(API_URL, headers=headers, json=payload)
-    if response.status_code == 200:
-        return response.json()
-    else:
-        raise Exception(f"Failed to get embeddings: {response.status_code}, {response.text}")
-    
-    
 # Create vector database
 def create_vector_db(DATA_PATH):
-    loader = DirectoryLoader(DATA_PATH,
-                             glob='*.pdf',
-                             loader_cls=PyPDFLoader)
-
+    # Load documents from PDF files
+    loader = DirectoryLoader(DATA_PATH, glob='*.pdf', loader_cls=PyPDFLoader)
     documents = loader.load()
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=500,
-                                                   chunk_overlap=50)
+    
+    # Split documents into chunks
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
     texts = text_splitter.split_documents(documents)
-    
-    text_chunks = [text.page_content for text in texts]
         
-    embeddings = []
-    for chunk in text_chunks:
-        embedding = get_embedding(chunk)
-        embeddings.append(embedding)
+    embeddings = HuggingFaceEmbeddings(model_name='sentence-transformers/multi-qa-mpnet-base-dot-v1',
+                                       model_kwargs={'device': 'cpu'})
 
-    # Convert embeddings to a numpy array
-    embeddings_array = np.array(embeddings).astype('float32')
-
-    # Create a FAISS index
-    dimension = embeddings_array.shape[1]  # Dimension of the embeddings
-    index = faiss.IndexFlatL2(dimension)  # L2 distance index
-    index.add(embeddings_array)  # Add embeddings to the index
-
-    # Save the FAISS index to disk
-    faiss.write_index(index, DB_FAISS_PATH)
-    
-        
-    # embeddings = HuggingFaceEmbeddings(model_name='sentence-transformers/multi-qa-mpnet-base-dot-v1',
-    #                                    model_kwargs={'device': 'cpu'})
-
-    # db = FAISS.from_documents(texts, embeddings)
-    # db.save_local(DB_FAISS_PATH)
+    db = FAISS.from_documents(texts, embeddings)
+    db.save_local(DB_FAISS_PATH)
 
 
 ##Local Document RAG system
 
 def Retrieve_SKills():
     # Retrieve vector database
-    # embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/multi-qa-mpnet-base-dot-v1",
-    #                                    model_kwargs={'device': 'cpu'})
-    # db = FAISS.load_local(DB_FAISS_PATH, embeddings)
-    db = faiss.read_index(DB_FAISS_PATH)
+    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/multi-qa-mpnet-base-dot-v1",
+                                       model_kwargs={'device': 'cpu'})
+    db = FAISS.load_local(DB_FAISS_PATH, embeddings)
     #Retrieval QA Chain
     qa = RetrievalQA.from_chain_type(llm=llm,
                                        chain_type='stuff',
@@ -148,16 +114,15 @@ def Retrieve_SKills():
                                        chain_type_kwargs={'prompt':SK},
                                        return_source_documents=True,
                                        )
-    response = qa.run("Extract skills from the CV.")
+    response = qa.run("Extract skills from the CV as well as their mastery level by the user.")
     memory.chat_memory.add_ai_message(response)
     return response
 
 def TaskNovelty(task: str): #task name
     # Retrieve vector database
-    # embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/multi-qa-mpnet-base-dot-v1",
-    #                                    model_kwargs={'device': 'cpu'})
-    # db = FAISS.load_local(DB_FAISS_PATH, embeddings)
-    db = faiss.read_index(DB_FAISS_PATH)
+    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/multi-qa-mpnet-base-dot-v1",
+                                       model_kwargs={'device': 'cpu'})
+    db = FAISS.load_local(DB_FAISS_PATH, embeddings)
     #Retrieval QA Chain
     qa = RetrievalQA.from_chain_type(llm=llm,
                                        chain_type='stuff',
@@ -173,10 +138,9 @@ def TaskNovelty(task: str): #task name
 #Conversation with CV (QA)
 def CV_Chat(message: str):
     # Retrieve vector database
-    # embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/multi-qa-mpnet-base-dot-v1",
-    #                                    model_kwargs={'device': 'cpu'})
-    # db = FAISS.load_local(DB_FAISS_PATH, embeddings)
-    db = faiss.read_index(DB_FAISS_PATH)
+    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/multi-qa-mpnet-base-dot-v1",
+                                       model_kwargs={'device': 'cpu'})
+    db = FAISS.load_local(DB_FAISS_PATH, embeddings)
     convret = ConversationalRetrievalChain.from_llm(llm=llm,
                                                   chain_type = "stuff", 
                                                   retriever=db.as_retriever(search_kwargs={'k': 2}),

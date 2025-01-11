@@ -99,8 +99,7 @@
     <div class="content">
         <h1>Upload Your CV</h1>
         <!-- <p>Acceptable File Formats: PDF, DOC, DOCX</p> -->
-        <!-- <form action="/UploadFile" method="POST" enctype="multipart/form-data" id="UploadForm"> -->
-        <form id="UploadForm">
+        <form action="/UploadFile" method="POST" enctype="multipart/form-data" id="UploadForm">
             <input type="file" id="cv" name="cv" accept=".pdf,.doc,.docx" required>
             <button type="submit">Upload</button>
         </form>
@@ -114,7 +113,6 @@
     </div> 
     <div>
         <form id="RedirectForm" action="/SysData" method="GET">
-            <input type="hidden" name="hidden-input" value="None">
             <button type="submit">Done</button>
         </form>
     </div>

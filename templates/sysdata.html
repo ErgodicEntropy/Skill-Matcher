@@ -28,7 +28,7 @@
                 </tr>
                 {% endfor %}    
             </table>
-            <form action="/ShowAITasks" method="POST">
+            <form id="AITasksForm" action="/ShowAITasks" method="POST">
                 <input type="submit" value="Show AI Tasks" class="task-submit-button">
             </form>    
         </div>
@@ -53,8 +53,8 @@
                 </tr>
                 {% endfor %}
             </table>
-            <form action="/ShowAISkill" method="POST" class="add-skill-form">
-                <input type="submit" value="Skills based on your CV" class="skill-submit-button">
+            <form id="AISkillForm" action="/ShowAISkill" method="POST" class="add-skill-form">
+                <input type="submit" value="CV Skills" class="skill-submit-button">
             </form>
         </div>
     </div>

@@ -73,70 +73,11 @@ function updateLoadingMessage(message) {
     document.getElementById('loading-message').textContent = message;
 }
 
-document.getElementById('UploadForm').addEventListener('submit', function (event) {
-    event.preventDefault(); // Prevent default form submission
-    // Gather all form data
-    const formData = new FormData(this);
-
-    // Submit to the /data endpoint
-    fetch('/UploadFile', {
-        method: 'POST',
-        body: formData
-    }).then(response => {
-        if (response.ok){
-            showLoading();
-            updateLoadingMessage('Almost there! Thanks for your patience');
-        }
-        else {
-            console.error('Error submitting to /data:', response.status);
-            updateLoadingMessage('Something went wrong. Please try again.');
-            hideLoading();
-        }
-    }).catch(error => {
-        console.error('Error submitting to /data:', error);
-        updateLoadingMessage('Something went wrong. Please try again.');
-        hideLoading();
-    })
-    setTimeout(() => {
-        updateLoadingMessage('Your CV has been uploaded successfully!');
-    }, 3000);
-
-});
-
 document.getElementById('RedirectForm').addEventListener('submit', function (event) {
     event.preventDefault(); // Prevent default form submission
-
+ 
     showLoading();
     updateLoadingMessage('Processing your request. Please wait...');
 
-    // Gather all form data (hidden input with None value)
-    const formData = new FormData(this);
-
-    // Submit to the /data endpoint
-    fetch('/SysData', {
-        method: 'POST',
-        body: formData
-    }).then(response => {
-        if (response.ok) {
-            // Update the loading message
-            updateLoadingMessage('Almost there! Thanks for your patience');
-
-        } else {
-            console.error('Error submitting to /data:', response.status);
-            updateLoadingMessage('Something went wrong. Please try again.');
-            hideLoading(); // Hide the loading overlay on error
-        }
-    }).catch(error => {
-        console.error('Error submitting to /data:', error);
-        updateLoadingMessage('Something went wrong. Please try again.');
-        hideLoading(); // Hide the loading overlay on error
-    });
-});
-
-
-// document.getElementById('RedirectForm').addEventListener('submit', function (event) {
-//     event.preventDefault(); // Prevent default form submission
-
-//     showLoading();
-//     updateLoadingMessage('Almost there! Thanks for your patience');
-// });
+ });
+ 

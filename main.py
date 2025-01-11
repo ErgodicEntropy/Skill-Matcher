@@ -219,8 +219,6 @@ async def upload_cv(cv: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-DATA_PATH = 'uploads/'
-# agents.create_vector_db(DATA_PATH)
 
 
 
@@ -242,16 +240,18 @@ aiskill_id_counter = skill_id_counter
 
 @app.get("/SysData", response_class=HTMLResponse)
 async def display_neoskills(request: Request):
+    DATA_PATH = os.path.join('uploads')
+    agents.create_vector_db(DATA_PATH)
     return templates.TemplateResponse("sysdata.html", {"request": request, "NewTasks":AITasks, "NewSkills": AISkills})
 
 @app.post("/ShowAITasks")
 async def ai_tasks():
-    global aiskill_id_counter, AITasks, Skills
+    global aitask_id_counter, AITasks, Skills
     inputskill = ",".join([skill.name for skill in Skills])
     newtasks = agents.SuggestTasks(inputskill)
     NT = extract_json(newtasks)
     for t in NT: 
-        task = Task(id=aitask_id_counter, name=t["content"], date=datetime.now())
+        task = Task(id=aitask_id_counter, name=t["name"], date=datetime.now())
         AITasks.append(task)
         aitask_id_counter += 1
     return RedirectResponse(url="/SysData", status_code=303)

@@ -7,7 +7,7 @@ function LinkClick(taskId){
   // Save the task ID in a hidden input or JavaScript variable
   const updateForm = document.getElementById('update-form-clicker');
   // Set the form action dynamically
-  updateForm.action =  `/UpdateTask/${taskId}` 
+  updateForm.action =  `/UpdateAITask/${taskId}` 
 
   // Optionally, populate the input field with the current task name
   const taskName = document.querySelector(`a[onclick*="LinkClick('${taskId}')"]`).closest('tr').querySelector('td').innerText.trim();
@@ -32,7 +32,7 @@ function LinkClickS(skillId){
    const updateForm = document.getElementById('update-skill-form');
    // Set the form action dynamically
    const SkillValue = document.getElementById("skill-data").dataset.skillId
-   updateForm.action =  `/UpdateSkill/${SkillValue}` 
+   updateForm.action =  `/UpdateAISkill/${SkillValue}` 
 
    // Optionally, populate the input field with the current task name
    const taskName = document.querySelector(`a[onclick="LinkClickS(${skillId})"]`).closest('tr').querySelector('td').innerText;
@@ -72,6 +72,27 @@ function hideLoading() {
 function updateLoadingMessage(message) {
    document.getElementById('loading-message').textContent = message;
 }
+
+window.addEventListener('load', function () {
+   hideLoading();
+});
+
+document.getElementById('AISkillsForm').addEventListener('submit', function (event) {
+   event.preventDefault(); // Prevent default form submission
+
+   showLoading();
+   updateLoadingMessage('Processing your request. Please wait...');
+
+});
+
+
+document.getElementById('AITasksForm').addEventListener('submit', function (event) {
+   event.preventDefault(); // Prevent default form submission
+
+   showLoading();
+   updateLoadingMessage('Processing your request. Please wait...');
+});
+
 
 document.getElementById('RedirectForm').addEventListener('submit', function (event) {
    event.preventDefault(); // Prevent default form submission
