@@ -9,7 +9,7 @@ import json
 import os
 import agents
 
-def extract_json(data_str:str) -> Union[list, dict]: # LLM Response
+def extract_json(data_str:str): # LLM Response
     try:
         n = data_str.index('[')
         m = data_str.index(']')
@@ -18,7 +18,7 @@ def extract_json(data_str:str) -> Union[list, dict]: # LLM Response
         print(f"Error extracting JSON: {e}")
         return {}
 
-def extract_JSON(data_str:str) -> Union[list, dict]: # LLM Response
+def extract_JSON(data_str:str): # LLM Response
     if data_str.startswith("```json"):
         data_str = data_str[7:]
     if data_str.endswith("```"):
@@ -33,21 +33,39 @@ def extract_JSON(data_str:str) -> Union[list, dict]: # LLM Response
         print(f"Error extracting JSON: {e}")
         return {}
     
-def WeightCategory(weight: str):
-    WeightDict = {
-        "extremely low":10, "low":30, "moderate":50, "high":70, "extremely high":90
-    }
-    return WeightDict[weight]
-        
-def SkillTransfer(CommonSkills: Union[list,dict]): 
+def WC(weight):
+    if weight == "extremely low":
+        return 10
+    elif weight == "low":
+        return 30
+    elif weight == "moderate":
+        return 50
+    elif weight == "high":
+        return 70
+    elif weight == "extremely high":
+        return 90
+    else:
+        return 50
+
+def convertibility(st):
+    try: 
+        int(st)
+        return True
+    except ValueError:
+        return False    
+
+def SkillTransfer(CommonSkills): 
     score = 0
     for skill in CommonSkills:
-        value = int(skill["mastery"])*WeightCategory(skill["weight"])
+        if convertibility(skill["mastery"]):
+            value = int(skill["mastery"])*WC(skill["weight"])
+        else:
+            value = 50*WC(skill["weight"])
         score+= value
     
-    return score/len(CommonSkills)*100
-
-
+    return score/(len(CommonSkills)*100)
+        
+        
 app = FastAPI()
 
 # Mount static files (e.g., CSS, JS)
@@ -212,7 +230,7 @@ async def upload_cv(cv: UploadFile = File(...)):
         file_path = f"{UPLOAD_DIR}/{cv.filename}"
         with open(file_path, "wb") as buffer:
             buffer.write(await cv.read())
-        return RedirectResponse(url="/", status_code=303)
+        return RedirectResponse(url="/SysData", status_code=303)
         # return JSONResponse(content={"message": "File uploaded successfully!"}, status_code=200)
         # return {"message": f"File '{cv.filename}' uploaded successfully!"}
     except Exception as e:
@@ -274,7 +292,7 @@ async def delete_skill(task_id: int):
 @app.post("/ShowAISkills")
 async def retrieve_skills():
     global AISkills, aiskill_id_counter    
-    RetrievedSkills = agents.Retrieve_SKills()
+    RetrievedSkills = agents.Retrieve_Skills()
     RS = extract_json(RetrievedSkills)
     for skill in RS: 
         sk = Skill(id = aiskill_id_counter, name=skill["name"], mastery=categorymapper[skill["mastery"]])
@@ -322,7 +340,7 @@ async def Compute(request: Request):
     for task in Tasks:
         skillsreq = agents.TaskReq(task)
         required_skills = extract_json(skillsreq)
-        user_skills = ",".join([{"name": skill.name, "mastery": skill.mastery} for skill in Skills])
+        user_skills = json.dumps([{"name": skill.name, "mastery": skill.mastery} for skill in Skills], indent=4)
         Common_Skills = agents.Commonalize(user_skills, required_skills)
         CS = extract_json(Common_Skills)
         score = SkillTransfer(CS)

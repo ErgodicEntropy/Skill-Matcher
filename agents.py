@@ -11,9 +11,6 @@ import prompts
 import numpy as np 
 import os
 
-import sys
-print(sys.executable)
-
 llm = Cohere(cohere_api_key="")
 DB_FAISS_PATH = os.path.abspath(os.path.join('vectorstore', 'db_faiss'))
 
@@ -102,7 +99,7 @@ def create_vector_db(DATA_PATH):
 
 ##Local Document RAG system
 
-def Retrieve_SKills():
+def Retrieve_Skills():
     # Retrieve vector database
     embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/multi-qa-mpnet-base-dot-v1",
                                        model_kwargs={'device': 'cpu'})
@@ -114,9 +111,9 @@ def Retrieve_SKills():
                                        chain_type_kwargs={'prompt':SK},
                                        return_source_documents=True,
                                        )
-    response = qa.run("Extract skills from the CV as well as their mastery level by the user.")
-    memory.chat_memory.add_ai_message(response)
-    return response
+    response = qa("Extract skills from the CV as well as their mastery level by the user.")
+    result = response["result"]  # Access the result
+    return result
 
 def TaskNovelty(task: str): #task name
     # Retrieve vector database
@@ -130,9 +127,9 @@ def TaskNovelty(task: str): #task name
                                        chain_type_kwargs={'prompt':TN},
                                        return_source_documents=True,
                                        )
-    response = qa.run({"task": task})
-    memory.chat_memory.add_ai_message(response)
-    return response
+    response = qa({"task": task})
+    result = response["result"]  # Access the result
+    return result
 
 
 #Conversation with CV (QA)
@@ -148,6 +145,6 @@ def CV_Chat(message: str):
                                                   combine_docs_chain_kwargs={'prompt': CVQA},
                                                   return_source_documents=True,verbose=False)
     
-    response = convret.run({"message": message})
-    memory.chat_memory.add_user_message(message)
-    return response
+    response = convret({"message": message})
+    result = response["result"]  # Access the result
+    return result

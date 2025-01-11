@@ -3,7 +3,7 @@ from langchain.prompts import PromptTemplate
 SkillRetrieval = PromptTemplate(
     input_variables=["context"],  # Keep "context" as the retriever will pass it
     template="""
-    You are an expert in extracting skills from CVs. Your task is to analyze the provided text and extract a list of skills mentioned by the candidate, along with their level of mastery.
+    You are an expert in extracting skills from CVs. Your task is to analyze the provided text and extract top 5 skills mentioned by the candidate, along with their level of mastery.
 
     Instructions:
     1. Carefully read the text and identify all technical, soft, and domain-specific skills mentioned in the CV.
@@ -19,6 +19,8 @@ SkillRetrieval = PromptTemplate(
     4. Format the output as a JSON array of objects, where each object has "name" and "mastery" keys. Print ONLY the JSON and nothing else.
     5. If no skills are found, return an empty array.
 
+
+    MAKE SURE THAT YOU RETIREVE ONLY 5 SKILLS (NO MORE: 5 as a maximum)
     Examples:
     ---
     Example 1:
@@ -318,6 +320,7 @@ Return the common skills in the following JSON format:
     }}
 ]
 
+Please make sure to keep the mastery values and weight values as they are, instead of randomizing them!!! Just retrieve common skills between user skills and required skills and simply replicate the same mastery and weight values !!!!
 IMPORTANT: Return ONLY the JSON and NOTHING ELSE. Do not include any additional text or explanations.                              
                               
                               

@@ -461,7 +461,6 @@ button:hover {
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black background */
-    display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1001; /* Ensure it's above other elements */

@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skill List</title>
+    <title>Data</title>
     <link rel="stylesheet" href="{{ url_for('static', path='css/data.css') }}">
 </head>
 <body>
+    <h1>SkillSync</h1>
+    <p>Align what you need to do with what you can do!</p>          
     <div class="container">
         <div id="left-div">
             <h1>Tasks</h1>
@@ -111,11 +113,6 @@
             <p id="loading-message"></p>
         </div>
     </div> 
-    <div>
-        <form id="RedirectForm" action="/SysData" method="GET">
-            <button type="submit">Done</button>
-        </form>
-    </div>
 
     <script src="{{ url_for('static', path='js/data.js') }}"></script>
 </body>

@@ -73,11 +73,10 @@ function updateLoadingMessage(message) {
     document.getElementById('loading-message').textContent = message;
 }
 
-document.getElementById('RedirectForm').addEventListener('submit', function (event) {
-    event.preventDefault(); // Prevent default form submission
- 
+// Add event listener to the form
+document.getElementById('UploadForm').addEventListener('submit', function () {
+    // Show loading overlay and update message
     showLoading();
     updateLoadingMessage('Processing your request. Please wait...');
 
- });
- 
+});

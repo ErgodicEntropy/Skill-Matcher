@@ -1,11 +1,18 @@
+# installed using python==3.11.9
 fastAPI
 uvicorn
 jinja2
 python-multipart
 itsdangerous
 langchain==0.0.184
+cohere
+faiss-cpu
+chroma==0.4.3
+transformers
+sentence-transformers
+torch
 pydantic==1.10.19
-numpy
+numpy==1.26.4
 matplotlib
 sqlalchemy
 databases

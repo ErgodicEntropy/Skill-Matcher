@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skill List</title>
+    <title>SysData</title>
     <link rel="stylesheet" href="{{ url_for('static', path='css/data.css') }}">
 </head>
 <body>
     <div class="container">
         <div id="left-div">
-            <h1>Tasks</h1>
-            <p>Add your tasks by order of priority</p>        
+            <h1>AI-generated Tasks</h1>
+            <p>Suggested tasks for you!</p>        
             <table>
                 <tr>
                     <th>Name</th>
@@ -29,12 +29,12 @@
                 {% endfor %}    
             </table>
             <form id="AITasksForm" action="/ShowAITasks" method="POST">
-                <input type="submit" value="Show AI Tasks" class="task-submit-button">
+                <input type="submit" value="Show" class="task-submit-button">
             </form>    
         </div>
         <div id="right-div">
-            <h1>Skills</h1>
-            <p>Add a Skill</p>
+            <h1>CV Skills</h1>
+            <p>Find out skills based on your CV!</p>
             <table>
                 <tr>
                     <th>Name</th>
@@ -53,8 +53,8 @@
                 </tr>
                 {% endfor %}
             </table>
-            <form id="AISkillForm" action="/ShowAISkill" method="POST" class="add-skill-form">
-                <input type="submit" value="CV Skills" class="skill-submit-button">
+            <form id="AISkillForm" action="/ShowAISkills" method="POST" class="add-skill-form">
+                <input type="submit" value="Show" class="skill-submit-button">
             </form>
         </div>
     </div>
@@ -91,6 +91,7 @@
             <p id="loading-message"></p>
         </div>
     </div> 
+
     <div>
         <form id="RedirectForm" action="/Compute" method="POST">
             <input type="hidden" name="hidden-input" value="None">
